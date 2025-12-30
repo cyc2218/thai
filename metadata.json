@@ -1,0 +1,8 @@
+{
+  "name": "Changsis Thai trip Planner - Group Travel App",
+  "description": "A warm, Japanese stationery-style group travel planner with schedules, bookings, expenses, journals, and AI-powered planning assistance.",
+  "requestFramePermissions": [
+    "camera",
+    "geolocation"
+  ]
+}
