@@ -1,7 +1,7 @@
 
 import React, { useState, useContext, useMemo } from 'react';
-import { Plus, TrendingUp, Trash2, Check, X, Calculator, Calendar } from 'lucide-react';
-// Fix: Use AppContext instead of EditModeContext
+import { Plus, TrendingUp, Trash2, Check, X, Calculator, Calendar, AlertCircle, AlertTriangle } from 'lucide-react';
+// 使用 AppContext 取得編輯狀態
 import { AppContext } from '../App';
 
 interface ExpenseItem {
@@ -22,7 +22,6 @@ const CATEGORIES = [
 ];
 
 const ExpenseView: React.FC = () => {
-  // Fix: Use AppContext
   const { isEditMode } = useContext(AppContext);
   const [activeFilter, setActiveFilter] = useState('All');
   const [expenses, setExpenses] = useState<ExpenseItem[]>([
@@ -34,21 +33,23 @@ const ExpenseView: React.FC = () => {
 
   const exchangeRate = 0.95;
   const [showAdd, setShowAdd] = useState(false);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
   const [inputAmount, setInputAmount] = useState('0');
   const [inputTitle, setInputTitle] = useState('');
   const [selectedCat, setSelectedCat] = useState(CATEGORIES[1]);
   const [selectedDate, setSelectedDate] = useState('2026-01-07');
 
-  // 自動重算總金額
+  // 過濾後的支出項目
   const filteredExpenses = useMemo(() => 
     activeFilter === 'All' ? expenses : expenses.filter(e => e.cat === activeFilter)
   , [expenses, activeFilter]);
 
+  // 計算總額
   const categoryTotal = useMemo(() => 
     filteredExpenses.reduce((sum, item) => sum + item.amount, 0)
   , [filteredExpenses]);
 
-  // 自動重算每日統計圖
+  // 每日統計資料
   const dailyStats = useMemo(() => {
     const stats: Record<string, number> = {};
     const tripDates = ['2026-01-07', '2026-01-08', '2026-01-09', '2026-01-10', '2026-01-11', '2026-01-12', '2026-01-13'];
@@ -59,10 +60,17 @@ const ExpenseView: React.FC = () => {
     return tripDates.map(d => ({ date: d.split('-').slice(1).join('/'), total: stats[d] }));
   }, [expenses]);
 
-  const handleDelete = (id: number) => {
-    // 實際刪除邏輯：過濾掉該 id 的項目
-    if (confirm('確定要刪除這筆支出嗎？🧸')) {
-      setExpenses(prev => prev.filter(e => e.id !== id));
+  // 觸發刪除流程
+  const askDelete = (id: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setConfirmDeleteId(id);
+  };
+
+  // 執行刪除
+  const executeDelete = () => {
+    if (confirmDeleteId !== null) {
+      setExpenses(prev => prev.filter(item => item.id !== confirmDeleteId));
+      setConfirmDeleteId(null);
     }
   };
 
@@ -142,56 +150,72 @@ const ExpenseView: React.FC = () => {
         </div>
       </div>
 
-      {/* 支出清單 - 向左滑動刪除 */}
-      <div className="space-y-3">
-        <h3 className="px-2 font-black text-[10px] text-gray-400 uppercase tracking-widest flex items-center gap-2">
-          Swipe Left to Delete <div className="h-[1px] flex-1 bg-[#E0E5D5]"></div>
-        </h3>
-        {filteredExpenses.map((item) => (
-          <div key={item.id} className="relative group overflow-hidden rounded-[2.25rem]">
-            {/* 底層刪除按鈕 */}
-            <div className="absolute inset-0 bg-red-400 flex items-center justify-end px-6">
-              <button 
-                onClick={() => handleDelete(item.id)}
-                className="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center text-white active:scale-75 transition-transform"
-              >
-                <Trash2 size={24} />
-              </button>
-            </div>
+      {/* 分類篩選 */}
+      <div className="flex gap-2 overflow-x-auto py-2 custom-scrollbar">
+        {CATEGORIES.map(cat => (
+          <button
+            key={cat.id}
+            onClick={() => setActiveFilter(cat.id)}
+            className={`flex-shrink-0 px-4 py-2 rounded-full text-[10px] font-black border-2 transition-all active:scale-95 ${
+              activeFilter === cat.id ? 'bg-[#C6A664] border-[#C6A664] text-white shadow-md' : 'bg-white border-[#E0E5D5] text-gray-400'
+            }`}
+          >
+            {cat.emoji} {cat.label}
+          </button>
+        ))}
+      </div>
 
-            {/* 滑動內容層 */}
-            <div className="relative z-10 overflow-x-auto snap-x snap-mandatory scroll-smooth custom-scrollbar">
-              <div className="flex w-[125%]">
-                <div className="w-[80%] snap-start shrink-0">
-                  <div className="mori-card p-4 mori-shadow border-4 bg-white flex justify-between items-center transition-all group-active:scale-[0.98]">
-                    <div className="flex items-center gap-3 overflow-hidden">
-                      <div className="w-12 h-12 rounded-2xl bg-[#FDF9F0] border-2 border-[#E0E5D5] flex items-center justify-center text-2xl shadow-inner shrink-0">
-                        {item.emoji}
-                      </div>
-                      <div className="overflow-hidden">
-                        <h4 className="font-black text-sm text-[#5D5443] truncate">{item.title}</h4>
-                        <p className="text-[10px] font-bold text-gray-400 mt-0.5">{item.date} · {item.user}</p>
-                      </div>
-                    </div>
-                    <div className="text-right shrink-0 ml-2">
-                      <p className="font-black text-sm text-[#5D5443]">฿ {item.amount.toLocaleString()}</p>
-                      <p className="text-[9px] font-black text-[#8BAE8E] uppercase tracking-tighter">shared</p>
-                    </div>
-                  </div>
+      {/* 支出清單 */}
+      <div className="space-y-3">
+        <div className="flex justify-between items-center px-2">
+           <h3 className="font-black text-[10px] text-gray-400 uppercase tracking-widest flex items-center gap-2 flex-1">
+            Activity Log <div className="h-[1px] flex-1 bg-[#E0E5D5]"></div>
+          </h3>
+          {isEditMode && (
+             <span className="text-[9px] font-black text-red-400 bg-red-50 px-2 py-0.5 rounded-full border border-red-100 animate-pulse ml-2">
+               解鎖編輯中
+             </span>
+          )}
+        </div>
+
+        {filteredExpenses.map((item) => (
+          <div key={item.id} className="animate-in fade-in slide-in-from-right-4 duration-300">
+            <div className={`mori-card p-4 mori-shadow border-4 bg-white flex justify-between items-center transition-all ${isEditMode ? 'border-red-100 shadow-[6px_6px_0px_#FEE2E2]' : 'border-[#E0E5D5]'}`}>
+              <div className="flex items-center gap-3 overflow-hidden">
+                <div className="w-12 h-12 rounded-2xl bg-[#FDF9F0] border-2 border-[#E0E5D5] flex items-center justify-center text-2xl shadow-inner shrink-0">
+                  {item.emoji}
                 </div>
-                {/* 佔位空間用於顯示刪除按鈕 */}
-                <div className="w-[20%] snap-end" />
+                <div className="overflow-hidden">
+                  <h4 className="font-black text-sm text-[#5D5443] truncate">{item.title}</h4>
+                  <p className="text-[10px] font-bold text-gray-400 mt-0.5">{item.date} · {item.user}</p>
+                </div>
               </div>
-            </div>
-            
-            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-20 group-hover:opacity-100 transition-opacity">
-               <span className="text-[8px] font-black text-gray-300 uppercase tracking-widest rotate-90 origin-right">Swipe Left 👈</span>
+
+              <div className="flex items-center gap-3 ml-2 shrink-0">
+                <div className="text-right">
+                  <p className="font-black text-sm text-[#5D5443]">฿ {item.amount.toLocaleString()}</p>
+                  <p className="text-[9px] font-black text-[#8BAE8E] uppercase tracking-tighter">shared</p>
+                </div>
+                
+                {/* 刪除按鈕：點擊頂部鎖頭解鎖後出現 */}
+                {isEditMode && (
+                  <button 
+                    onClick={(e) => askDelete(item.id, e)}
+                    className="bg-red-50 text-red-400 p-3 rounded-2xl border-2 border-red-100 shadow-sm active:scale-75 transition-all animate-in zoom-in-50 cursor-pointer hover:bg-red-100"
+                    title="刪除此筆記錄"
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         ))}
+        
         {filteredExpenses.length === 0 && (
-          <div className="text-center py-20 opacity-30">
-            <p className="text-xs font-black italic">No records found 🧸</p>
+          <div className="text-center py-20 opacity-30 flex flex-col items-center gap-2">
+            <AlertCircle size={32} />
+            <p className="text-xs font-black italic">尚無支出記錄 🧸</p>
           </div>
         )}
       </div>
@@ -203,6 +227,37 @@ const ExpenseView: React.FC = () => {
       >
         <Plus size={32} />
       </button>
+
+      {/* 自定義刪除確認彈窗 */}
+      {confirmDeleteId !== null && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[200] flex items-center justify-center p-6">
+          <div className="mori-card w-full max-w-xs bg-white border-4 border-red-200 p-6 space-y-6 animate-in zoom-in-95 duration-200 text-center">
+            <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto text-red-400">
+              <AlertTriangle size={32} />
+            </div>
+            <div>
+              <h3 className="text-lg font-black text-[#5D5443]">要刪除這筆帳嗎？</h3>
+              <p className="text-xs text-gray-400 mt-2 font-bold leading-relaxed">
+                這項操作無法復原喔，<br/>確定要讓它消失在小手帳裡嗎？🧸
+              </p>
+            </div>
+            <div className="flex gap-3 pt-2">
+              <button 
+                onClick={() => setConfirmDeleteId(null)}
+                className="flex-1 py-3 rounded-2xl border-2 border-[#E0E5D5] text-gray-400 font-black text-xs active:scale-95 transition-all bg-white"
+              >
+                先不要 🙅
+              </button>
+              <button 
+                onClick={executeDelete}
+                className="flex-1 py-3 rounded-2xl bg-red-400 text-white font-black text-xs mori-shadow active:scale-95 transition-all border-2 border-red-400 shadow-[4px_4px_0px_#FCA5A5]"
+              >
+                狠心刪除 🗑️
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 新增記帳 Modal */}
       {showAdd && (
