@@ -5,39 +5,92 @@ import { AppContext } from '../App';
 
 const INITIAL_BANGKOK_DATA = {
   tripSummary: [
-    { day: 1, date: '1/7 (三)', title: '素萬那普機場 (BKK) · MBK Center · 朱拉隆功美食街 · Lotus 蓮花超市', icon: '🛫', color: 'bg-orange-100' },
-    { day: 2, date: '1/8 (四)', title: '水門市場 · 紅大哥海南雞 · Pratunam Market · December\'s · Tofu Skin · Siam商圈 · Big C', icon: '🛍️', color: 'bg-blue-100' },
-    { day: 3, date: '1/9 (五)', title: '榮泰米粉湯 · BENKOFF 咖啡廳 · EmSphere · Phed Mark · Terminal 21 · Yum²', icon: '🍜', color: 'bg-green-100' },
-    { day: 4, date: '1/10 (六)', title: '勝利紀念碑船麵 · 泰北咖哩麵 · 洽圖洽週末市集 · 喬德夜市 · 輝煌夜市', icon: '🎋', color: 'bg-yellow-100' },
-    { day: 5, date: '1/11 (日)', title: 'Mr. Joe 脆皮豬 · 嵩越路 · 唐人街 · TumLubThai · 鄭王廟 · 大皇宮 · 臥佛寺 · 河濱夜市', icon: '🏯', color: 'bg-red-100' },
-    { day: 6, date: '1/12 (一)', title: '邢泰記 · 60 年烤肉 · 班蘭蛋捲 · ICONSIAM · Kodtalay · Dusit Central Park', icon: '💎', color: 'bg-purple-100' },
-    { day: 7, date: '1/13 (二)', title: '飯店週邊 (Ibis Bangkok Siam) · Lotus 超市 · 素萬那普機場 (BKK)', icon: '✈️', color: 'bg-gray-100' },
+    { day: 1, date: '1/7 (三)', title: '入境與朱拉隆功美食探索', icon: '🛫', color: 'bg-orange-100' },
+    { day: 2, date: '1/8 (四)', title: '水門市場批發與 Siam 商圈購物', icon: '🛍️', color: 'bg-blue-100' },
+    { day: 3, date: '1/9 (五)', title: 'Sukhumvit 素坤逸 現代曼谷巡禮', icon: '🍜', color: 'bg-green-100' },
+    { day: 4, date: '1/10 (六)', title: '洽圖洽週末市集與夜市雙響炮', icon: '🎋', color: 'bg-yellow-100' },
+    { day: 5, date: '1/11 (日)', title: '舊城古蹟與落日河岸航行', icon: '🏯', color: 'bg-red-100' },
+    { day: 6, date: '1/12 (一)', title: '老派浪漫與曼谷新地標', icon: '💎', color: 'bg-purple-100' },
+    { day: 7, date: '1/13 (二)', title: '飯店週邊最後採買與返程', icon: '✈️', color: 'bg-gray-100' },
   ],
   itinerary: {
     0: {
-      fullTitle: 'Day 1 | 1/7 (三) 入境與朱拉隆功美食探索',
+      fullTitle: 'Day 1 | 1/7 (三) 入境與美食探索',
       items: [
-        { id: '1-1', time: '16:30', title: '抵達素萬那普機場 (BKK) 🛫', location: 'BKK Airport', transport: '機場快線 (ARL) → Phaya Thai 轉 BTS', category: 'Transport', note: '辦理入境手續、領取行李並準備換錢或領取網卡。' },
-        { id: '1-2', time: '19:00', title: 'MBK Center 購物與伴手禮 🛍️', location: '飯店對面', transport: '步行即達', category: 'Shopping', note: '老牌商場，適合採買藥妝、泰國特色零食與平價服飾。' },
-        { id: '1-3', time: '20:30', title: '朱拉隆功美食街、60 年烤肉 🍖', location: 'Banthat Thong Road', transport: '步行 10-15 分鐘', category: 'Food', note: '曼谷最紅美食戰區，聚集許多米其林必比登推薦名店與 60 年歷史傳統烤肉。' },
-        { id: '1-4', time: '22:00', title: 'Lotus 蓮花超市 補貨 🛒', location: '飯店西側', transport: '步行 5 分鐘', category: 'Shopping', note: '大型連鎖超市，適合最後補足大包裝伴手禮、飲料 or 水果。' },
+        { id: '1-1', time: '16:30', title: '抵達素萬那普機場 (BKK) 🛫', location: 'BKK Airport', transport: 'ARL → Phaya Thai 轉 BTS', category: 'Transport', note: '領取行李與網卡，開啟曼谷之旅。' },
+        { id: '1-2', time: '19:00', title: 'MBK Center 購物與伴手禮 🛍️', location: '飯店對面', transport: '步行即達', category: 'Shopping', note: '採買藥妝、零食與平價服飾。' },
+        { id: '1-3', time: '20:30', title: '朱拉隆功美食街、60 年烤肉 🍖', location: 'Banthat Thong Road', transport: '步行 10-15 分鐘', category: 'Food', note: '米其林必比登戰區，必吃傳統烤肉。' },
+        { id: '1-4', time: '22:00', title: 'Lotus 蓮花超市 補貨 🛒', location: '飯店西側', transport: '步行 5 分鐘', category: 'Shopping', note: '大型超市，補足生活用品與零食。' },
       ],
-      dayTransport: "機場至飯店：搭乘 ARL 至終點 Phaya Thai 站，轉 BTS (綠線) 至 Siam 轉一站 (Silom 線) 到 National Stadium (W1)。\n飯店至行程地點：全程步行。MBK 在飯店對面；美食街沿 Rama 1 路走 10-15 分鐘；Lotus 在飯店西側走 5 分鐘。"
+      dayTransport: "機場至飯店：ARL 至 Phaya Thai 轉 BTS 至 National Stadium。\n市中心移動：全程步行即可抵達各大商圈。"
     },
     1: {
-      fullTitle: 'Day 2 | 1/8 (四) 水門市場批發與 Siam 商圈購物',
+      fullTitle: 'Day 2 | 1/8 (四) 水門市場與 Siam 購物',
       items: [
-        { id: '2-1', time: '10:00', title: '水門市場 Platinum 👗', location: 'Platinum Fashion Mall', transport: 'Skywalk 步行', category: 'Shopping', note: '泰國最大的服飾批發中心，有冷氣吹非常舒適。' },
-        { id: '2-2', time: '12:00', title: '紅大哥海南雞飯 🍛', location: '水門市場旁', transport: '步行', category: 'Food', note: '必吃米其林推薦的紅大哥海南雞飯。' },
-        { id: '2-3', time: '13:00', title: 'Pratunam Market、December\'s', location: '水門市場巷弄', transport: '步行', category: 'Shopping', note: '深入巷弄探索在地品牌。' },
-        { id: '2-4', time: '15:30', title: 'Central World、Siam 商圈 🏢', location: 'Siam 區', transport: 'Skywalk', category: 'Shopping', note: '全球知名購物地標。' },
+        { id: '2-1', time: '10:00', title: '水門市場 Platinum 👗', location: 'Platinum Fashion Mall', transport: 'Skywalk 步行', category: 'Shopping', note: '泰國最大服飾批發中心，有冷氣吹非常舒適。' },
+        { id: '2-2', time: '12:00', title: '紅大哥海南雞飯 🍛', location: '水門市場旁', transport: '步行', category: 'Food', note: '必吃米其林推薦名店。' },
+        { id: '2-3', time: '13:00', title: 'December\'s & Tofu Skin 🛍️', location: '水門市場巷弄', transport: '步行', category: 'Shopping', note: '探索在地品牌 December\'s 與高評價選物店。' },
+        { id: '2-4', time: '15:30', title: 'Siam 商圈百貨巡禮 🏢', location: 'Siam 區', transport: 'Skywalk', category: 'Shopping', note: '包含 Siam Discovery、Center 與 Paragon。' },
+        { id: '2-5', time: '20:00', title: 'Big C Supercenter 🛒', location: 'Chit Lom', transport: '步行/Skywalk', category: 'Shopping', note: '全曼谷最知名的 Big C，泰式泡麵、燕窩一次買齊。' },
       ],
-      dayTransport: "建議利用 Skywalk (空中步道) 步行，避開塞車與豔陽。"
+      dayTransport: "推薦方式：利用空中步道 (Skywalk) 避開塞車，串聯 Siam 百貨至水門空橋。"
+    },
+    2: {
+      fullTitle: 'Day 3 | 1/9 (五) 素坤逸現代曼谷巡禮',
+      items: [
+        { id: '3-1', time: '09:00', title: '榮泰米粉湯 (Rung Rueang) 🍜', location: 'BTS Phrom Phong', transport: 'BTS 綠線', category: 'Food', note: '連年米其林必比登推薦，湯頭鮮美。' },
+        { id: '3-2', time: '10:00', title: 'EmSphere 百貨探索 🛍️', location: 'BTS Phrom Phong', transport: '步行即達', category: 'Shopping', note: '曼谷最新開幕百貨，設計感十足。' },
+        { id: '3-3', time: '11:00', title: 'BENKOFF 咖啡廳 ☕', location: 'Thong Lor 區', transport: 'Grab/BTS 轉步行', category: 'Food', note: '超紅臘腸狗店長 Bobby & Billy 在這裡喔！' },
+        { id: '3-4', time: '11:30', title: 'Mae Varee 芒果糯米飯 🥭', location: 'Thong Lor 站旁', transport: '步行', category: 'Food', note: '曼谷最知名的芒果糯米飯老店之一。' },
+        { id: '3-5', time: '13:00', title: 'Phed Mark 打拋豬名店 🌶️', location: 'BTS Ekkamai', transport: 'BTS 綠線', category: 'Food', note: '部落客 Mark Wiens 創立，挑戰超辛辣打拋豬。' },
+        { id: '3-6', time: '15:30', title: 'Terminal 21 Asok 🌍', location: 'Asok 站', transport: 'BTS 綠線', category: 'Shopping', note: '以環遊世界為主題，美食街物美價廉。' },
+        { id: '3-7', time: '19:00', title: 'Yum² (After Yum) 🥗', location: 'BTS Ekkamai', transport: 'BTS 綠線', category: 'Food', note: '超人氣涼拌菜，口味酸辣帶勁。' },
+      ],
+      dayTransport: "主要工具：BTS 綠線 (Sukhumvit Line)。景點皆位於站點附近。"
+    },
+    3: {
+      fullTitle: 'Day 4 | 1/10 (六) 洽圖洽與夜市雙響炮',
+      items: [
+        { id: '4-1', time: '08:30', title: '勝利紀念碑船麵/泰北咖哩麵 🍜', location: 'Victory Monument', transport: 'BTS 綠線', category: 'Food', note: '體驗一碗 10-20 元的船麵與濃郁 Khao Soi。' },
+        { id: '4-2', time: '10:00', title: '洽圖洽週末市集 🎋', location: 'BTS Mo Chit', transport: 'BTS 綠線', category: 'Shopping', note: '全球最大戶外市集，僅週末開放，上萬攤位。' },
+        { id: '4-3', time: '18:30', title: '喬德夜市 (Jodd Fairs) 🍖', location: 'MRT Phra Ram 9', transport: 'MRT 藍線', category: 'Food', note: '曼谷最紅夜市，必吃火山排骨。' },
+        { id: '4-4', time: '21:00', title: '輝煌夜市宵夜場 🍢', location: 'MRT Huai Khwang', transport: 'MRT 藍線', category: 'Food', note: '具在地生活氣息，體驗曼谷人日常宵夜。' },
+      ],
+      dayTransport: "BTS 與 MRT 轉乘：從洽圖洽 (Mo Chit) 轉搭 MRT 藍線往喬德與輝煌夜市。"
+    },
+    4: {
+      fullTitle: 'Day 5 | 1/11 (日) 舊城古蹟與落日航行',
+      items: [
+        { id: '5-1', time: '07:30', title: 'Mr. Joe 脆皮豬肉粿汁 🥣', location: 'Chan Road', transport: 'BTS → Grab', category: 'Food', note: '傳奇脆皮豬肉，湯頭胡椒味濃郁。' },
+        { id: '5-2', time: '10:30', title: '唐人街 & 嵩越路老街 🏮', location: 'MRT Wat Mangkon', transport: 'MRT 藍線', category: 'Sightseeing', note: '感受老屋新生文青感，吃 TumLubThai 椰奶點心。' },
+        { id: '5-3', time: '13:30', title: '鄭王廟 & 大皇宮古蹟群 🏯', location: '河岸區', transport: '接駁船', category: 'Sightseeing', note: '曼谷精華古蹟，必買鄭王廟造型煎餅。' },
+        { id: '5-4', time: '17:30', title: '落日航行 (藍旗觀光船) 🌇', location: '昭披耶河', transport: '觀光船', category: 'Sightseeing', note: '夕陽餘暉中欣賞河岸絕美夜間燈光。' },
+        { id: '5-5', time: '21:00', title: '河濱夜市 Asiatique 🎡', location: 'Sathorn Pier', transport: '免費接駁船', category: 'Shopping', note: '倉庫風格商場，有摩天輪與美麗河景。' },
+      ],
+      dayTransport: "河運指南：17:30 於 Tha Tien 碼頭搭「藍旗觀光船」最具CP值。"
+    },
+    5: {
+      fullTitle: 'Day 6 | 1/12 (一) 老派浪漫與新地標',
+      items: [
+        { id: '6-1', time: '09:00', title: '邢泰記 & 60 年烤肉 ☕', location: 'Giant Swing 附近', transport: 'Grab', category: 'Food', note: '泰式老派早茶館，必吃班蘭蛋捲。' },
+        { id: '6-2', time: '13:00', title: 'ICONSIAM 暹羅天地 💎', location: '河岸', transport: '接駁船', category: 'Shopping', note: '曼谷最強百貨，地下一樓水上市場超豐富。' },
+        { id: '6-3', time: '17:00', title: 'Kodtalay 海鮮餐廳 🦀', location: '市區', transport: 'Grab', category: 'Food', note: '最後一晚大餐，食材鮮美種類齊全。' },
+        { id: '6-4', time: '20:00', title: 'Central Park (新地標) 🏢', location: 'Silom 區', transport: 'BTS Sala Daeng', category: 'Sightseeing', note: '漫步欣賞城市夜色與現代建築美學。' },
+      ],
+      dayTransport: "多元移動：舊城區叫 Grab，往 ICONSIAM 搭接駁船，晚上搭 BTS。"
+    },
+    6: {
+      fullTitle: 'Day 7 | 1/13 (二) 完美賦歸',
+      items: [
+        { id: '7-1', time: '10:00', title: '飯店週邊最後採買 🧸', location: 'National Stadium', transport: '步行', category: 'Shopping', note: '最後衝刺 Lotus 超市或飯店休息。' },
+        { id: '7-2', time: '13:30', title: '出發前往機場 ✈️', location: 'BKK Airport', transport: 'BTS → ARL', category: 'Transport', note: '建議 14:40 前抵達機場完成報到。' },
+        { id: '7-3', time: '17:40', title: '星宇 JX746 起飛 🛫', location: 'BKK Airport', transport: 'Flight', category: 'Transport', note: '再見曼谷！帶著滿滿回憶回家。' },
+      ],
+      dayTransport: "返程交通：BTS National Stadium -> Siam -> Phaya Thai 轉 ARL。"
     }
   }
 };
 
-// 產生 07:00 - 23:00 的逐時天氣數據
 const generateHourlyWeather = (dayIndex: number) => {
   const hours = [];
   const baseTemp = dayIndex % 2 === 0 ? 30 : 28;
@@ -45,7 +98,6 @@ const generateHourlyWeather = (dayIndex: number) => {
 
   for (let h = 7; h <= 23; h++) {
     const timeStr = `${h.toString().padStart(2, '0')}:00`;
-    // 溫度模擬：14-16點最高
     const tempVar = Math.sin((h - 7) * Math.PI / 16) * 6;
     const temp = Math.round(baseTemp + tempVar);
     
@@ -57,26 +109,19 @@ const generateHourlyWeather = (dayIndex: number) => {
     } else if (h > 10) {
       icon = <CloudSun size={14} className="text-orange-300" />;
     }
-
     hours.push({ time: timeStr, temp, icon });
   }
   return hours;
 };
 
 const MOCK_WEATHER: Record<number, any> = {
-  0: { 
-    hourly: generateHourlyWeather(0), 
-    tip: '今天整天都是大太陽！7:00-11:00 氣溫適中，但中午過後體感會飆破 36 度，記得多補充水分。☀️' 
-  },
-  1: { 
-    hourly: generateHourlyWeather(1), 
-    tip: '注意！14:00 後有午後雷陣雨機率。建議早上先去戶外景點，傍晚待在商場內吹冷氣躲雨。☔' 
-  },
-  2: { hourly: generateHourlyWeather(2), tip: '氣候穩定，是逛街的好日子。傍晚微風徐徐，非常適合去河濱看夕陽。🌇' },
+  0: { hourly: generateHourlyWeather(0), tip: '今天大太陽！午後體感會飆破 36 度，記得補充水分。☀️' },
+  1: { hourly: generateHourlyWeather(1), tip: '注意！14:00 後有午後雷陣雨機率。建議待在商場內。☔' },
+  2: { hourly: generateHourlyWeather(2), tip: '氣候穩定，是逛街的好日子。傍晚很適合去河濱看夕陽。🌇' },
   3: { hourly: generateHourlyWeather(3), tip: '紫外線預報為強烈等級，請務必攜帶遮陽帽或墨鏡。🕶️' },
-  4: { hourly: generateHourlyWeather(4), tip: '局部地區有陣雨，建議穿防水涼拖鞋，方便在曼谷街頭移動。🩴' },
+  4: { hourly: generateHourlyWeather(4), tip: '局部地區有陣雨，建議穿防水涼拖鞋，方便移動。🩴' },
   5: { hourly: generateHourlyWeather(5), tip: '多雲轉晴，早晚溫差較小，穿著輕便服飾即可。👕' },
-  6: { hourly: generateHourlyWeather(6), tip: '最後一天行程，天氣晴朗。去機場路上可能會塞車，記得提早出發！✈️' },
+  6: { hourly: generateHourlyWeather(6), tip: '最後一天行程，天氣晴朗。去機場路可能會塞，提早出發！✈️' },
 };
 
 const ScheduleView: React.FC = () => {
@@ -129,15 +174,15 @@ const ScheduleView: React.FC = () => {
         
         {showFullOverview && (
           <div className="grid grid-cols-1 gap-3 animate-in fade-in slide-in-from-top-4">
-            {INITIAL_BANGKOK_DATA.tripSummary.map((d) => (
+            {INITIAL_BANGKOK_DATA.tripSummary.map((d, i) => (
               <div 
-                key={d.day}
+                key={i}
                 onClick={() => {
-                  setSelectedDate(d.day - 1);
+                  setSelectedDate(i);
                   setShowFullOverview(false);
                 }}
                 className={`flex items-start gap-3 p-3 rounded-2xl border-2 transition-all active:scale-95 cursor-pointer ${
-                  selectedDate === d.day - 1 ? 'bg-[#F0F7F0] border-[#8BAE8E]' : 'bg-white border-[#FDF9F0] hover:border-[#E0E5D5]'
+                  selectedDate === i ? 'bg-[#F0F7F0] border-[#8BAE8E]' : 'bg-white border-[#FDF9F0] hover:border-[#E0E5D5]'
                 }`}
               >
                 <div className={`w-10 h-10 rounded-2xl ${d.color} flex items-center justify-center text-xl shrink-0 border-2 border-white shadow-sm mt-0.5`}>
@@ -171,7 +216,6 @@ const ScheduleView: React.FC = () => {
              </div>
           </div>
 
-          {/* 07:00 - 23:00 逐時預報橫向捲動 */}
           <div className="flex gap-4 overflow-x-auto py-3 custom-scrollbar -mx-2 px-2 scroll-smooth">
             {weatherData.hourly.map((h: any, i: number) => (
               <div key={i} className="flex flex-col items-center shrink-0 min-w-[55px] space-y-1 group transition-all">
@@ -184,7 +228,6 @@ const ScheduleView: React.FC = () => {
             ))}
           </div>
 
-          {/* AI 天氣小貼士 */}
           <div className="mt-4 flex items-start gap-3 bg-[#FDF9F0] p-4 rounded-2xl border-2 border-dashed border-[#8BAE8E]/30 relative">
              <div className="absolute -top-3 -left-1 bg-white border-2 border-[#8BAE8E] rounded-lg px-2 py-0.5 text-[8px] font-black text-[#8BAE8E] uppercase tracking-widest shadow-sm">
                 Memo
@@ -195,13 +238,6 @@ const ScheduleView: React.FC = () => {
             </p>
           </div>
         </div>
-      </div>
-
-      {/* 每日標題 */}
-      <div className="px-2 mt-2">
-        <h2 className="text-xl font-black text-[#5D5443] tracking-tighter border-l-8 border-[#C6A664] pl-3 py-1">
-          {currentDayData?.fullTitle || `Day ${selectedDate + 1} | ${dates[selectedDate]} 行程`}
-        </h2>
       </div>
 
       {/* 日期選擇 */}
@@ -220,6 +256,13 @@ const ScheduleView: React.FC = () => {
             <span className="text-lg font-black">{date}</span>
           </button>
         ))}
+      </div>
+
+      {/* 每日標題 */}
+      <div className="px-2 mt-2">
+        <h2 className="text-xl font-black text-[#5D5443] tracking-tighter border-l-8 border-[#C6A664] pl-3 py-1">
+          {currentDayData?.fullTitle}
+        </h2>
       </div>
 
       {/* 行程清單 */}
