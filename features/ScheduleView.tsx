@@ -1,8 +1,10 @@
 
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { MapPin, Info, Heart, CalendarDays, ChevronRight, Car, Edit3, X, Clock, Type, AlignLeft } from 'lucide-react';
 import { CATEGORY_COLORS } from '../constants.tsx';
 import { AppContext } from '../App';
+import { db } from '../services/firebase';
+import { doc, onSnapshot, setDoc, getDoc } from 'firebase/firestore';
 
 const INITIAL_BANGKOK_DATA = {
   tripSummary: [
@@ -95,11 +97,29 @@ const INITIAL_BANGKOK_DATA = {
 const ScheduleView: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState(0);
   const [showFullOverview, setShowFullOverview] = useState(false);
-  const [itineraryData, setItineraryData] = useState(INITIAL_BANGKOK_DATA.itinerary);
+  const [itineraryData, setItineraryData] = useState<any>(null); // 改為 null 初始值，等待 Firebase 加載
   const [editingItem, setEditingItem] = useState<any>(null);
 
   const dates = ['1/7', '1/8', '1/9', '1/10', '1/11', '1/12', '1/13'];
   const { isEditMode } = useContext(AppContext);
+  const docId = 'trip_schedule_v1'; // Firestore document ID
+
+  // 監聽 Firebase 資料
+  useEffect(() => {
+    if (!db) return;
+    const unsub = onSnapshot(doc(db, 'trips', docId), (docSnap) => {
+      if (docSnap.exists()) {
+        setItineraryData(docSnap.data().itinerary);
+      } else {
+        // 如果文件不存在，寫入初始資料
+        setDoc(doc(db, 'trips', docId), { itinerary: INITIAL_BANGKOK_DATA.itinerary });
+        setItineraryData(INITIAL_BANGKOK_DATA.itinerary);
+      }
+    });
+    return () => unsub();
+  }, []);
+
+  if (!itineraryData) return <div className="p-10 text-center animate-pulse">載入行程中... ✈️</div>;
 
   const currentDayData = itineraryData[selectedDate as keyof typeof itineraryData] || itineraryData[0];
 
@@ -108,15 +128,19 @@ const ScheduleView: React.FC = () => {
     setEditingItem({ ...item });
   };
 
-  const handleSaveEdit = () => {
-    if (!editingItem) return;
+  const handleSaveEdit = async () => {
+    if (!editingItem || !db) return;
     const updatedItinerary = { ...itineraryData };
     const dayItems = [...updatedItinerary[selectedDate as keyof typeof itineraryData].items];
     const itemIndex = dayItems.findIndex(i => i.id === editingItem.id);
     if (itemIndex !== -1) {
       dayItems[itemIndex] = editingItem;
       updatedItinerary[selectedDate as keyof typeof itineraryData].items = dayItems;
+
+      // 更新本地 state (讓 UI 立即反應)
       setItineraryData(updatedItinerary);
+      // 寫入 Firebase
+      await setDoc(doc(db, 'trips', docId), { itinerary: updatedItinerary }, { merge: true });
     }
     setEditingItem(null);
   };

@@ -1,18 +1,20 @@
-import React, { useState, useContext } from 'react';
-import { 
-  CheckCircle2, 
-  Circle, 
-  ListTodo, 
-  ShoppingBag, 
-  Luggage, 
-  Plus, 
-  X, 
-  ChevronUp, 
-  ChevronDown, 
-  Check, 
-  Trash2 
+import React, { useState, useContext, useEffect } from 'react';
+import {
+  CheckCircle2,
+  Circle,
+  ListTodo,
+  ShoppingBag,
+  Luggage,
+  Plus,
+  X,
+  ChevronUp,
+  ChevronDown,
+  Check,
+  Trash2
 } from 'lucide-react';
 import { AppContext } from '../App';
+import { db } from '../services/firebase';
+import { doc, onSnapshot, setDoc, getDoc } from 'firebase/firestore';
 
 interface TodoItem {
   id: string;
@@ -21,21 +23,45 @@ interface TodoItem {
   type: string;
 }
 
+const INITIAL_TODOS: TodoItem[] = [
+  { id: '1', text: '申請泰國落地簽/電子簽 🛂', done: true, type: 'todo' },
+  { id: '2', text: '預約機場接送 🚐', done: false, type: 'todo' },
+  { id: '3', text: '萬用轉接頭 (Type C/A) ⚡', done: true, type: 'luggage' },
+  { id: '4', text: '薄外套 (室內冷氣強) 🧥', done: false, type: 'luggage' },
+  { id: '5', text: '驅蚊噴霧 🦟', done: false, type: 'shopping' },
+];
+
 const PlanningView: React.FC = () => {
   const { isEditMode } = useContext(AppContext);
-  const [todos, setTodos] = useState<TodoItem[]>([
-    { id: '1', text: '申請泰國落地簽/電子簽 🛂', done: true, type: 'todo' },
-    { id: '2', text: '預約機場接送 🚐', done: false, type: 'todo' },
-    { id: '3', text: '萬用轉接頭 (Type C/A) ⚡', done: true, type: 'luggage' },
-    { id: '4', text: '薄外套 (室內冷氣強) 🧥', done: false, type: 'luggage' },
-    { id: '5', text: '驅蚊噴霧 🦟', done: false, type: 'shopping' },
-  ]);
+  const [todos, setTodos] = useState<TodoItem[]>([]);
+  const docId = 'trip_planning_v1';
 
   const [addingToCategory, setAddingToCategory] = useState<string | null>(null);
   const [newItemText, setNewItemText] = useState('');
 
+  // 監聽 Firebase 資料
+  useEffect(() => {
+    if (!db) return;
+    const unsub = onSnapshot(doc(db, 'trips', docId), (docSnap) => {
+      if (docSnap.exists()) {
+        setTodos(docSnap.data().list || []);
+      } else {
+        setDoc(doc(db, 'trips', docId), { list: INITIAL_TODOS });
+        setTodos(INITIAL_TODOS);
+      }
+    });
+    return () => unsub();
+  }, []);
+
+  const updateFirestore = async (newTodos: TodoItem[]) => {
+    if (!db) return;
+    await setDoc(doc(db, 'trips', docId), { list: newTodos }, { merge: true });
+  };
+
   const toggleTodo = (id: string) => {
-    setTodos(todos.map(t => t.id === id ? { ...t, done: !t.done } : t));
+    const newTodos = todos.map(t => t.id === id ? { ...t, done: !t.done } : t);
+    // setTodos(newTodos); // 監聽器會處理 UI 更新
+    updateFirestore(newTodos);
   };
 
   const addItem = (type: string) => {
@@ -46,14 +72,17 @@ const PlanningView: React.FC = () => {
       done: false,
       type: type
     };
-    setTodos([...todos, newItem]);
+    const newTodos = [...todos, newItem];
+    updateFirestore(newTodos);
+
     setNewItemText('');
     setAddingToCategory(null);
   };
 
   const deleteItem = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    setTodos(todos.filter(t => t.id !== id));
+    const newTodos = todos.filter(t => t.id !== id);
+    updateFirestore(newTodos);
   };
 
   const moveItem = (id: string, direction: 'up' | 'down', e: React.MouseEvent) => {
@@ -63,7 +92,7 @@ const PlanningView: React.FC = () => {
 
     const categoryItems = todos.filter(t => t.type === type);
     const indexInCategory = categoryItems.findIndex(t => t.id === id);
-    
+
     if (direction === 'up' && indexInCategory === 0) return;
     if (direction === 'down' && indexInCategory === categoryItems.length - 1) return;
 
@@ -75,8 +104,8 @@ const PlanningView: React.FC = () => {
     const idx1 = newTodos.findIndex(t => t.id === id);
     const idx2 = newTodos.findIndex(t => t.id === targetId);
     [newTodos[idx1], newTodos[idx2]] = [newTodos[idx2], newTodos[idx1]];
-    
-    setTodos(newTodos);
+
+    updateFirestore(newTodos);
   };
 
   const categories = [
@@ -98,11 +127,11 @@ const PlanningView: React.FC = () => {
                 </div>
                 <h3 className="font-black text-[#5D5443]">{cat.label}</h3>
               </div>
-              <button 
+              <button
                 onClick={() => setAddingToCategory(addingToCategory === cat.id ? null : cat.id)}
                 className="bg-white p-2 rounded-full border-2 border-[#E0E5D5] text-[#8BAE8E] active:scale-90 transition-transform shadow-sm"
               >
-                {addingToCategory === cat.id ? <X size={16}/> : <Plus size={16} />}
+                {addingToCategory === cat.id ? <X size={16} /> : <Plus size={16} />}
               </button>
             </div>
 
@@ -110,7 +139,7 @@ const PlanningView: React.FC = () => {
             {addingToCategory === cat.id && (
               <div className="mx-4 animate-in slide-in-from-top-2 duration-200">
                 <div className="mori-card p-3 border-4 border-dashed border-[#8BAE8E] bg-white flex items-center gap-2">
-                  <input 
+                  <input
                     autoFocus
                     type="text"
                     placeholder="輸入內容後按 Enter..."
@@ -119,7 +148,7 @@ const PlanningView: React.FC = () => {
                     onChange={(e) => setNewItemText(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && addItem(cat.id)}
                   />
-                  <button 
+                  <button
                     onClick={() => addItem(cat.id)}
                     className="bg-[#8BAE8E] text-white p-1.5 rounded-lg active:scale-90 transition-transform"
                   >
@@ -131,24 +160,23 @@ const PlanningView: React.FC = () => {
 
             <div className="space-y-3">
               {categoryTodos.map((todo, idx) => (
-                <div 
-                  key={todo.id} 
+                <div
+                  key={todo.id}
                   onClick={() => !isEditMode && toggleTodo(todo.id)}
-                  className={`mori-card p-4 mori-shadow flex items-center gap-3 bg-white border-4 transition-all group ${
-                    isEditMode ? 'border-dashed border-[#E0E5D5]' : 'active:scale-98 cursor-pointer'
-                  }`}
+                  className={`mori-card p-4 mori-shadow flex items-center gap-3 bg-white border-4 transition-all group ${isEditMode ? 'border-dashed border-[#E0E5D5]' : 'active:scale-98 cursor-pointer'
+                    }`}
                 >
                   {/* 左側狀態圖示 / 編輯模式下的排序按鈕 */}
                   {isEditMode ? (
                     <div className="flex flex-col gap-1">
-                      <button 
+                      <button
                         onClick={(e) => moveItem(todo.id, 'up', e)}
                         disabled={idx === 0}
                         className="text-gray-300 hover:text-[#8BAE8E] disabled:opacity-20"
                       >
                         <ChevronUp size={16} />
                       </button>
-                      <button 
+                      <button
                         onClick={(e) => moveItem(todo.id, 'down', e)}
                         disabled={idx === categoryTodos.length - 1}
                         className="text-gray-300 hover:text-[#8BAE8E] disabled:opacity-20"
@@ -166,9 +194,8 @@ const PlanningView: React.FC = () => {
                     </div>
                   )}
 
-                  <span className={`flex-1 text-sm font-black transition-all ${
-                    !isEditMode && todo.done ? 'line-through text-gray-300 translate-x-1' : 'text-[#5D5443]'
-                  }`}>
+                  <span className={`flex-1 text-sm font-black transition-all ${!isEditMode && todo.done ? 'line-through text-gray-300 translate-x-1' : 'text-[#5D5443]'
+                    }`}>
                     {todo.text}
                   </span>
 
@@ -178,7 +205,7 @@ const PlanningView: React.FC = () => {
                       <span className="text-[8px] bg-[#FDF9F0] px-2 py-0.5 rounded-full border border-[#E0E5D5]">AI</span>
                     )}
                     {isEditMode && (
-                      <button 
+                      <button
                         onClick={(e) => deleteItem(todo.id, e)}
                         className="text-red-300 hover:text-red-500 p-1 transition-colors"
                       >
@@ -188,7 +215,7 @@ const PlanningView: React.FC = () => {
                   </div>
                 </div>
               ))}
-              
+
               {categoryTodos.length === 0 && !addingToCategory && (
                 <div className="text-center py-6 opacity-20 italic text-xs font-bold">
                   空空如也 🖍️
@@ -198,8 +225,8 @@ const PlanningView: React.FC = () => {
           </div>
         );
       })}
-      
-      <button 
+
+      <button
         onClick={() => {
           setAddingToCategory('todo');
           // 滾動到第一個分類

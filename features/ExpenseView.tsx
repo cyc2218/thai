@@ -1,7 +1,9 @@
-import React, { useState, useContext, useMemo } from 'react';
+import React, { useState, useContext, useMemo, useEffect } from 'react';
 import { Plus, TrendingUp, Trash2, Check, X, Calculator, Calendar, AlertCircle, AlertTriangle, Clock } from 'lucide-react';
 // 使用 AppContext 取得編輯狀態
 import { AppContext } from '../App';
+import { db } from '../services/firebase';
+import { doc, onSnapshot, setDoc, getDoc } from 'firebase/firestore';
 
 interface ExpenseItem {
   id: number;
@@ -30,15 +32,33 @@ const TRIP_DATES = [
   { date: '2026-01-13', label: '1/13 (D7)' },
 ];
 
+const INITIAL_EXPENSES: ExpenseItem[] = [
+  { id: 1, title: '朱拉隆功烤肉宵夜', amount: 450, cat: 'Food', user: 'Alex', emoji: '🍱', date: '2026-01-07' },
+  { id: 2, title: 'BTS 儲值卡加值', amount: 300, cat: 'Transport', user: 'Me', emoji: '🚆', date: '2026-01-07' },
+  { id: 3, title: 'Big C 伴手禮', amount: 2800, cat: 'Shopping', user: 'Jamie', emoji: '🛍️', date: '2026-01-08' },
+  { id: 4, title: '紅大哥海南雞飯', amount: 120, cat: 'Food', user: 'Me', emoji: '🍱', date: '2026-01-08' },
+];
+
 const ExpenseView: React.FC = () => {
   const { isEditMode } = useContext(AppContext);
   const [activeFilter, setActiveFilter] = useState('All');
-  const [expenses, setExpenses] = useState<ExpenseItem[]>([
-    { id: 1, title: '朱拉隆功烤肉宵夜', amount: 450, cat: 'Food', user: 'Alex', emoji: '🍱', date: '2026-01-07' },
-    { id: 2, title: 'BTS 儲值卡加值', amount: 300, cat: 'Transport', user: 'Me', emoji: '🚆', date: '2026-01-07' },
-    { id: 3, title: 'Big C 伴手禮', amount: 2800, cat: 'Shopping', user: 'Jamie', emoji: '🛍️', date: '2026-01-08' },
-    { id: 4, title: '紅大哥海南雞飯', amount: 120, cat: 'Food', user: 'Me', emoji: '🍱', date: '2026-01-08' },
-  ]);
+  const [expenses, setExpenses] = useState<ExpenseItem[]>([]);
+  const docId = 'trip_expenses_v1';
+
+  // 監聽 Firebase 資料
+  useEffect(() => {
+    if (!db) return;
+    const unsub = onSnapshot(doc(db, 'trips', docId), (docSnap) => {
+      if (docSnap.exists()) {
+        setExpenses(docSnap.data().list || []);
+      } else {
+        // 初始化預設資料
+        setDoc(doc(db, 'trips', docId), { list: INITIAL_EXPENSES });
+        setExpenses(INITIAL_EXPENSES);
+      }
+    });
+    return () => unsub();
+  }, []);
 
   const exchangeRate = 0.95;
   const [showAdd, setShowAdd] = useState(false);
@@ -75,10 +95,12 @@ const ExpenseView: React.FC = () => {
   };
 
   // 執行刪除
-  const executeDelete = () => {
-    if (confirmDeleteId !== null) {
-      setExpenses(prev => prev.filter(item => item.id !== confirmDeleteId));
+  const executeDelete = async () => {
+    if (confirmDeleteId !== null && db) {
+      const newList = expenses.filter(item => item.id !== confirmDeleteId);
+      // setExpenses(newList); // 讓監聽器自動更新 UI
       setConfirmDeleteId(null);
+      await setDoc(doc(db, 'trips', docId), { list: newList }, { merge: true });
     }
   };
 
@@ -97,9 +119,11 @@ const ExpenseView: React.FC = () => {
     }
   };
 
-  const saveExpense = () => {
+  const saveExpense = async () => {
     const amt = parseFloat(inputAmount);
     if (isNaN(amt) || amt <= 0) return alert('請輸入有效金額 🥟');
+    if (!db) return;
+
     const newEntry: ExpenseItem = {
       id: Date.now(),
       title: inputTitle || `${selectedCat.label}支出`,
@@ -109,7 +133,11 @@ const ExpenseView: React.FC = () => {
       emoji: selectedCat.emoji,
       date: selectedDate,
     };
-    setExpenses([newEntry, ...expenses]);
+
+    const newList = [newEntry, ...expenses];
+    // setExpenses(newList); // 讓監聽器自動更新 UI
+    await setDoc(doc(db, 'trips', docId), { list: newList }, { merge: true });
+
     setShowAdd(false);
     setInputAmount('0');
     setInputTitle('');
@@ -286,8 +314,8 @@ const ExpenseView: React.FC = () => {
                     key={d.date}
                     onClick={() => setSelectedDate(d.date)}
                     className={`flex-shrink-0 px-3 py-1.5 rounded-xl text-[10px] font-black border-2 transition-all ${selectedDate === d.date
-                        ? 'bg-[#8BAE8E] border-[#8BAE8E] text-white shadow-sm'
-                        : 'bg-white border-[#E0E5D5] text-gray-400'
+                      ? 'bg-[#8BAE8E] border-[#8BAE8E] text-white shadow-sm'
+                      : 'bg-white border-[#E0E5D5] text-gray-400'
                       }`}
                   >
                     {d.label}

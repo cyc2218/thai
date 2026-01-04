@@ -1,29 +1,48 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Download, ZoomIn, Info, Sparkles, Camera, Trash2, RefreshCw } from 'lucide-react';
+import { db, storage } from '../services/firebase';
+import { doc, onSnapshot, setDoc } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 const MetroMapView: React.FC = () => {
   const [image, setImage] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const docId = 'trip_metro_map_v1';
 
-  // 初始化時從 localStorage 讀取
+  // 監聽 Firebase 資料
   useEffect(() => {
-    const savedImage = localStorage.getItem('thai_trip_metro_map');
-    if (savedImage) {
-      setImage(savedImage);
-    }
+    if (!db) return;
+    const unsub = onSnapshot(doc(db, 'trips', docId), (docSnap) => {
+      if (docSnap.exists()) {
+        setImage(docSnap.data().imageUrl);
+      }
+    });
+    return () => unsub();
   }, []);
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64String = reader.result as string;
-        setImage(base64String);
-        localStorage.setItem('thai_trip_metro_map', base64String);
-      };
-      reader.readAsDataURL(file);
+    if (!file || !storage || !db) return;
+
+    try {
+      setIsUploading(true);
+      // 1. 上傳圖片到 Storage
+      const storageRef = ref(storage, `metro_maps/${Date.now()}_${file.name}`);
+      await uploadBytes(storageRef, file);
+
+      // 2. 取得下載網址
+      const downloadURL = await getDownloadURL(storageRef);
+
+      // 3. 儲存網址到 Firestore
+      await setDoc(doc(db, 'trips', docId), { imageUrl: downloadURL }, { merge: true });
+
+    } catch (error) {
+      console.error("Upload failed:", error);
+      alert("上傳失敗，請稍後再試 🐛");
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -31,10 +50,10 @@ const MetroMapView: React.FC = () => {
     fileInputRef.current?.click();
   };
 
-  const removeImage = () => {
-    if (confirm('確定要移除這張照片嗎？🧸')) {
-      setImage(null);
-      localStorage.removeItem('thai_trip_metro_map');
+  const removeImage = async () => {
+    if (confirm('確定要移除這張照片嗎？🧸') && db) {
+      // 這裡我們只移除連結，保留 Storage 檔案作為備份
+      await setDoc(doc(db, 'trips', docId), { imageUrl: null }, { merge: true });
     }
   };
 
@@ -49,18 +68,18 @@ const MetroMapView: React.FC = () => {
       {/* 照片顯示/上傳容器 */}
       <div className="mori-card overflow-hidden mori-shadow border-4 bg-white relative group p-2">
         <div className="washi-tape washi-tape-pink opacity-80 z-20"></div>
-        
+
         {/* 工具列 */}
         {image && (
           <div className="absolute top-8 right-6 z-20 flex flex-col gap-2">
-            <button 
+            <button
               onClick={triggerUpload}
               className="bg-white/90 backdrop-blur-sm p-3 rounded-2xl border-2 border-[#E0E5D5] shadow-sm active:scale-75 transition-transform"
               title="更換照片"
             >
               <RefreshCw size={20} className="text-[#8BAE8E]" />
             </button>
-            <button 
+            <button
               onClick={removeImage}
               className="bg-white/90 backdrop-blur-sm p-3 rounded-2xl border-2 border-[#E0E5D5] shadow-sm active:scale-75 transition-transform"
               title="刪除照片"
@@ -70,20 +89,20 @@ const MetroMapView: React.FC = () => {
           </div>
         )}
 
-        <input 
-          type="file" 
-          ref={fileInputRef} 
-          onChange={handleFileUpload} 
-          accept="image/*" 
-          className="hidden" 
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handleFileUpload}
+          accept="image/*"
+          className="hidden"
         />
 
         <div className="bg-[#FDF9F0] min-h-[350px] flex flex-col items-center justify-center p-6 border-2 border-dashed border-[#E0E5D5] rounded-[1.5rem] relative">
           {image ? (
             <div className="bg-white p-3 shadow-xl rotate-1 border border-gray-100 w-full animate-in fade-in zoom-in-95 duration-300">
-              <img 
-                src={image} 
-                alt="Uploaded Content" 
+              <img
+                src={image}
+                alt="Uploaded Content"
                 className="w-full h-auto rounded-sm object-contain max-h-[600px]"
               />
               <div className="mt-4 border-t border-gray-100 pt-2 text-center">
@@ -91,7 +110,7 @@ const MetroMapView: React.FC = () => {
               </div>
             </div>
           ) : (
-            <button 
+            <button
               onClick={triggerUpload}
               className="flex flex-col items-center gap-4 group active:scale-95 transition-transform"
             >
@@ -99,16 +118,16 @@ const MetroMapView: React.FC = () => {
                 <Camera size={40} />
               </div>
               <div className="text-center">
-                <p className="text-sm font-black text-[#5D5443]">點擊上傳照片</p>
-                <p className="text-[10px] text-gray-400 font-bold mt-1">上傳曼谷地鐵圖或重要截圖 ✨</p>
+                <p className="text-sm font-black text-[#5D5443]">{isUploading ? '正在上傳到雲端...' : '點擊上傳照片'}</p>
+                <p className="text-[10px] text-gray-400 font-bold mt-1">{isUploading ? '請稍候 🚀' : '上傳曼谷地鐵圖或重要截圖 ✨'}</p>
               </div>
             </button>
           )}
-          
+
           <div className="absolute bottom-4 left-4 right-4 flex justify-center">
-             <div className="bg-[#8BAE8E] text-white text-[8px] font-black px-4 py-1 rounded-full mori-shadow border-2 border-white">
-                TRAVEL MEMO STORAGE
-             </div>
+            <div className="bg-[#8BAE8E] text-white text-[8px] font-black px-4 py-1 rounded-full mori-shadow border-2 border-white">
+              TRAVEL MEMO STORAGE
+            </div>
           </div>
         </div>
 
@@ -119,7 +138,7 @@ const MetroMapView: React.FC = () => {
             <p className="text-[8px] text-gray-400 font-bold italic">適合放置地圖、預約確認、或清單照片 🖍️</p>
           </div>
           {image && (
-            <a 
+            <a
               href={image}
               download="bangkok-memo.png"
               className="bg-[#8BAE8E] text-white px-4 py-2 rounded-2xl text-[10px] font-black flex items-center gap-2 active:scale-90 transition-transform mori-shadow"
