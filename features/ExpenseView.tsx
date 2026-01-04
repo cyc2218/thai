@@ -1,6 +1,5 @@
-
 import React, { useState, useContext, useMemo } from 'react';
-import { Plus, TrendingUp, Trash2, Check, X, Calculator, Calendar, AlertCircle, AlertTriangle } from 'lucide-react';
+import { Plus, TrendingUp, Trash2, Check, X, Calculator, Calendar, AlertCircle, AlertTriangle, Clock } from 'lucide-react';
 // 使用 AppContext 取得編輯狀態
 import { AppContext } from '../App';
 
@@ -19,6 +18,16 @@ const CATEGORIES = [
   { id: 'Food', label: '美食', emoji: '🍱' },
   { id: 'Transport', label: '交通', emoji: '🚆' },
   { id: 'Shopping', label: '購物', emoji: '🛍️' },
+];
+
+const TRIP_DATES = [
+  { date: '2026-01-07', label: '1/7 (D1)' },
+  { date: '2026-01-08', label: '1/8 (D2)' },
+  { date: '2026-01-09', label: '1/9 (D3)' },
+  { date: '2026-01-10', label: '1/10 (D4)' },
+  { date: '2026-01-11', label: '1/11 (D5)' },
+  { date: '2026-01-12', label: '1/12 (D6)' },
+  { date: '2026-01-13', label: '1/13 (D7)' },
 ];
 
 const ExpenseView: React.FC = () => {
@@ -52,12 +61,11 @@ const ExpenseView: React.FC = () => {
   // 每日統計資料
   const dailyStats = useMemo(() => {
     const stats: Record<string, number> = {};
-    const tripDates = ['2026-01-07', '2026-01-08', '2026-01-09', '2026-01-10', '2026-01-11', '2026-01-12', '2026-01-13'];
-    tripDates.forEach(d => stats[d] = 0);
+    TRIP_DATES.forEach(d => stats[d.date] = 0);
     expenses.forEach(e => {
       if (stats[e.date] !== undefined) stats[e.date] += e.amount;
     });
-    return tripDates.map(d => ({ date: d.split('-').slice(1).join('/'), total: stats[d] }));
+    return TRIP_DATES.map(d => ({ date: d.date.split('-').slice(1).join('/'), total: stats[d.date] }));
   }, [expenses]);
 
   // 觸發刪除流程
@@ -105,6 +113,7 @@ const ExpenseView: React.FC = () => {
     setShowAdd(false);
     setInputAmount('0');
     setInputTitle('');
+    // 不重置日期，方便連續記帳同一天的花費
   };
 
   return (
@@ -187,7 +196,7 @@ const ExpenseView: React.FC = () => {
                 </div>
                 <div className="overflow-hidden">
                   <h4 className="font-black text-sm text-[#5D5443] truncate">{item.title}</h4>
-                  <p className="text-[10px] font-bold text-gray-400 mt-0.5">{item.date} · {item.user}</p>
+                  <p className="text-[10px] font-bold text-gray-400 mt-0.5">{item.date.split('-').slice(1).join('/')} · {item.user}</p>
                 </div>
               </div>
 
@@ -197,7 +206,6 @@ const ExpenseView: React.FC = () => {
                   <p className="text-[9px] font-black text-[#8BAE8E] uppercase tracking-tighter">shared</p>
                 </div>
                 
-                {/* 刪除按鈕：點擊頂部鎖頭解鎖後出現 */}
                 {isEditMode && (
                   <button 
                     onClick={(e) => askDelete(item.id, e)}
@@ -228,7 +236,7 @@ const ExpenseView: React.FC = () => {
         <Plus size={32} />
       </button>
 
-      {/* 自定義刪除確認彈窗 */}
+      {/* 刪除確認彈窗 */}
       {confirmDeleteId !== null && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[200] flex items-center justify-center p-6">
           <div className="mori-card w-full max-w-xs bg-white border-4 border-red-200 p-6 space-y-6 animate-in zoom-in-95 duration-200 text-center">
@@ -262,11 +270,34 @@ const ExpenseView: React.FC = () => {
       {/* 新增記帳 Modal */}
       {showAdd && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] flex items-end p-0">
-          <div className="w-full bg-[#FDF9F0] rounded-t-[2.5rem] p-6 space-y-4 animate-in slide-in-from-bottom-full border-t-8 border-[#C6A664]">
+          <div className="w-full bg-[#FDF9F0] rounded-t-[2.5rem] p-6 space-y-4 animate-in slide-in-from-bottom-full border-t-8 border-[#C6A664] max-h-[90vh] overflow-y-auto custom-scrollbar">
             <div className="flex justify-between items-center px-2">
               <h3 className="text-xl font-black text-[#5D5443]">記一筆支出 🧸</h3>
               <button onClick={() => setShowAdd(false)} className="bg-white p-2 rounded-full border-2 border-[#E0E5D5] shadow-sm"><X size={20}/></button>
             </div>
+            
+            {/* 日期選擇區 */}
+            <div className="space-y-2 px-2">
+              <p className="text-[10px] font-black text-[#C6A664] uppercase tracking-widest flex items-center gap-1.5">
+                <Calendar size={12} /> 選擇日期
+              </p>
+              <div className="flex gap-2 overflow-x-auto pb-2 custom-scrollbar">
+                {TRIP_DATES.map((d) => (
+                  <button
+                    key={d.date}
+                    onClick={() => setSelectedDate(d.date)}
+                    className={`flex-shrink-0 px-3 py-1.5 rounded-xl text-[10px] font-black border-2 transition-all ${
+                      selectedDate === d.date 
+                        ? 'bg-[#8BAE8E] border-[#8BAE8E] text-white shadow-sm' 
+                        : 'bg-white border-[#E0E5D5] text-gray-400'
+                    }`}
+                  >
+                    {d.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <div className="mori-card p-6 border-4 bg-white text-center space-y-3">
               <input 
                 type="text" 
@@ -279,6 +310,7 @@ const ExpenseView: React.FC = () => {
                 <p className="text-5xl font-black text-[#5D5443]">฿ {inputAmount}</p>
               </div>
             </div>
+            
             <div className="grid grid-cols-4 gap-3">
               {[1, 2, 3, '🍱', 4, 5, 6, '🚆', 7, 8, 9, '🛍️', 'C', 0, '.', '✓'].map(k => (
                 <button 
