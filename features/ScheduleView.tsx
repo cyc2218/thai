@@ -1,17 +1,18 @@
-import React, { useState, useContext, useMemo } from 'react';
-import { MapPin, Info, Heart, CalendarDays, ChevronRight, Car, Edit3, X, Save, Clock, Type, AlignLeft, Sun, Cloud, CloudRain, Thermometer, CloudLightning, CloudSun } from 'lucide-react';
+
+import React, { useState, useContext } from 'react';
+import { MapPin, Info, Heart, CalendarDays, ChevronRight, Car, Edit3, X, Clock, Type, AlignLeft } from 'lucide-react';
 import { CATEGORY_COLORS } from '../constants.tsx';
 import { AppContext } from '../App';
 
 const INITIAL_BANGKOK_DATA = {
   tripSummary: [
-    { day: 1, date: '1/7 (三)', title: '入境與朱拉隆功美食探索', icon: '🛫', color: 'bg-orange-100' },
-    { day: 2, date: '1/8 (四)', title: '水門市場批發與 Siam 商圈購物', icon: '🛍️', color: 'bg-blue-100' },
-    { day: 3, date: '1/9 (五)', title: 'Sukhumvit 素坤逸 現代曼谷巡禮', icon: '🍜', color: 'bg-green-100' },
-    { day: 4, date: '1/10 (六)', title: '洽圖洽週末市集與夜市雙響炮', icon: '🎋', color: 'bg-yellow-100' },
-    { day: 5, date: '1/11 (日)', title: '舊城古蹟與落日河岸航行', icon: '🏯', color: 'bg-red-100' },
-    { day: 6, date: '1/12 (一)', title: '老派浪漫與曼谷新地標', icon: '💎', color: 'bg-purple-100' },
-    { day: 7, date: '1/13 (二)', title: '飯店週邊最後採買與返程', icon: '✈️', color: 'bg-gray-100' },
+    { day: 1, date: '1/7 (三)', title: '素萬那普機場 (BKK) · MBK Center · 朱拉隆功美食街 (Banthat Thong Road) · Lotus 蓮花超市', icon: '🛫', color: 'bg-orange-100' },
+    { day: 2, date: '1/8 (四)', title: '水門市場 Platinum · 紅大哥海南雞飯 · Pratunam Market · December\'s · Tofu Skin · Siam商圈 (Central World、Siam Discovery、Siam Center、Siam Paragon) · Big C Supercenter', icon: '🛍️', color: 'bg-blue-100' },
+    { day: 3, date: '1/9 (五)', title: '榮泰米粉湯 (Rung Rueang) · BENKOFF 咖啡廳 · EmSphere · Phed Mark (打拋豬名店) · Terminal 21 Asok · Yum² (After Yum)', icon: '🍜', color: 'bg-green-100' },
+    { day: 4, date: '1/10 (六)', title: '勝利紀念碑船麵 · 泰北咖哩麵 (Khao Soi) · 洽圖洽週末市集 (Chatuchak Market) · 喬德夜市 (Jodd Fairs) · 光輝燈夜市 (輝煌夜市)', icon: '🎋', color: 'bg-yellow-100' },
+    { day: 5, date: '1/11 (日)', title: 'Kuay Jab Mr. Joe 脆皮豬肉粿汁 · 嵩越路 (Song Wat) · 唐人街 · TumLubThai · 鄭王廟 (Wat Arun) · 大皇宮/玉佛寺 · 臥佛寺 · 河濱夜市 (Asiatique)', icon: '🏯', color: 'bg-red-100' },
+    { day: 6, date: '1/12 (一)', title: '邢泰記 · 60 年烤肉 · 班蘭蛋捲 · ICONSIAM 暹羅天地 · Kodtalay 海鮮餐廳 · Central Park Bangkok (Dusit Central Park)', icon: '💎', color: 'bg-purple-100' },
+    { day: 7, date: '1/13 (二)', title: '飯店週邊 (Ibis Bangkok Siam) · Lotus 超市 · 素萬那普機場 (BKK)', icon: '✈️', color: 'bg-gray-100' },
   ],
   itinerary: {
     0: {
@@ -91,39 +92,6 @@ const INITIAL_BANGKOK_DATA = {
   }
 };
 
-const generateHourlyWeather = (dayIndex: number) => {
-  const hours = [];
-  const baseTemp = dayIndex % 2 === 0 ? 30 : 28;
-  const isRainyDay = dayIndex === 1 || dayIndex === 4;
-
-  for (let h = 7; h <= 23; h++) {
-    const timeStr = `${h.toString().padStart(2, '0')}:00`;
-    const tempVar = Math.sin((h - 7) * Math.PI / 16) * 6;
-    const temp = Math.round(baseTemp + tempVar);
-    
-    let icon = <Sun size={14} />;
-    if (isRainyDay && h >= 14 && h <= 19) {
-      icon = h % 3 === 0 ? <CloudLightning size={14} className="text-purple-400" /> : <CloudRain size={14} className="text-blue-400" />;
-    } else if (h > 17) {
-      icon = <Cloud size={14} className="text-gray-400" />;
-    } else if (h > 10) {
-      icon = <CloudSun size={14} className="text-orange-300" />;
-    }
-    hours.push({ time: timeStr, temp, icon });
-  }
-  return hours;
-};
-
-const MOCK_WEATHER: Record<number, any> = {
-  0: { hourly: generateHourlyWeather(0), tip: '今天大太陽！午後體感會飆破 36 度，記得補充水分。☀️' },
-  1: { hourly: generateHourlyWeather(1), tip: '注意！14:00 後有午後雷陣雨機率。建議待在商場內。☔' },
-  2: { hourly: generateHourlyWeather(2), tip: '氣候穩定，是逛街的好日子。傍晚很適合去河濱看夕陽。🌇' },
-  3: { hourly: generateHourlyWeather(3), tip: '紫外線預報為強烈等級，請務必攜帶遮陽帽或墨鏡。🕶️' },
-  4: { hourly: generateHourlyWeather(4), tip: '局部地區有陣雨，建議穿防水涼拖鞋，方便移動。🩴' },
-  5: { hourly: generateHourlyWeather(5), tip: '多雲轉晴，早晚溫差較小，穿著輕便服飾即可。👕' },
-  6: { hourly: generateHourlyWeather(6), tip: '最後一天行程，天氣晴朗。去機場路可能會塞，提早出發！✈️' },
-};
-
 const ScheduleView: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState(0);
   const [showFullOverview, setShowFullOverview] = useState(false);
@@ -134,7 +102,6 @@ const ScheduleView: React.FC = () => {
   const { isEditMode } = useContext(AppContext);
 
   const currentDayData = itineraryData[selectedDate as keyof typeof itineraryData] || itineraryData[0];
-  const weatherData = MOCK_WEATHER[selectedDate] || MOCK_WEATHER[0];
 
   const handleEditItem = (item: any) => {
     if (!isEditMode) return;
@@ -199,45 +166,6 @@ const ScheduleView: React.FC = () => {
             ))}
           </div>
         )}
-      </div>
-
-      {/* 氣象觀測站 */}
-      <div className="px-2">
-        <div className="mori-card p-4 border-4 border-[#8BAE8E] bg-white mori-shadow overflow-hidden">
-          <div className="flex justify-between items-center mb-3">
-             <div className="flex items-center gap-2">
-               <div className="bg-[#F0F7F0] p-1.5 rounded-lg">
-                 <Thermometer size={16} className="text-[#8BAE8E]" />
-               </div>
-               <h4 className="text-[10px] font-black text-[#5D5443] uppercase tracking-widest">Hourly Forecast (07-23)</h4>
-             </div>
-             <div className="text-[10px] font-black text-[#8BAE8E] bg-[#F0F7F0] px-2 py-0.5 rounded-full border border-[#E0E5D5]">
-               Bangkok, TH
-             </div>
-          </div>
-
-          <div className="flex gap-4 overflow-x-auto py-3 custom-scrollbar -mx-2 px-2 scroll-smooth">
-            {weatherData.hourly.map((h: any, i: number) => (
-              <div key={i} className="flex flex-col items-center shrink-0 min-w-[55px] space-y-1 group transition-all">
-                <span className="text-[8px] font-black text-gray-400 group-hover:text-[#8BAE8E]">{h.time}</span>
-                <div className="w-11 h-11 rounded-2xl bg-[#FDF9F0] border-2 border-[#E0E5D5] flex items-center justify-center text-[#C6A664] group-hover:border-[#C6A664] transition-colors shadow-inner">
-                  {h.icon}
-                </div>
-                <span className="text-[11px] font-black text-[#5D5443]">{h.temp}°</span>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-4 flex items-start gap-3 bg-[#FDF9F0] p-4 rounded-2xl border-2 border-dashed border-[#8BAE8E]/30 relative">
-             <div className="absolute -top-3 -left-1 bg-white border-2 border-[#8BAE8E] rounded-lg px-2 py-0.5 text-[8px] font-black text-[#8BAE8E] uppercase tracking-widest shadow-sm">
-                Memo
-             </div>
-            <div className="bg-white p-2 rounded-xl shadow-sm border border-[#E0E5D5] text-lg mt-1">💡</div>
-            <p className="text-[11px] font-bold text-[#5D5443] leading-relaxed">
-              {weatherData.tip}
-            </p>
-          </div>
-        </div>
       </div>
 
       {/* 日期選擇 */}

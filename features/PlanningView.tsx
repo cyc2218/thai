@@ -1,4 +1,3 @@
-
 import React, { useState, useContext } from 'react';
 import { 
   CheckCircle2, 
@@ -6,8 +5,6 @@ import {
   ListTodo, 
   ShoppingBag, 
   Luggage, 
-  Sparkles, 
-  Wand2, 
   Plus, 
   X, 
   ChevronUp, 
@@ -15,7 +12,6 @@ import {
   Check, 
   Trash2 
 } from 'lucide-react';
-import { getSmartPackingList } from '../services/gemini';
 import { AppContext } from '../App';
 
 interface TodoItem {
@@ -35,27 +31,11 @@ const PlanningView: React.FC = () => {
     { id: '5', text: '驅蚊噴霧 🦟', done: false, type: 'shopping' },
   ]);
 
-  const [aiLoading, setAiLoading] = useState(false);
   const [addingToCategory, setAddingToCategory] = useState<string | null>(null);
   const [newItemText, setNewItemText] = useState('');
 
   const toggleTodo = (id: string) => {
     setTodos(todos.map(t => t.id === id ? { ...t, done: !t.done } : t));
-  };
-
-  const handleAiSuggest = async () => {
-    setAiLoading(true);
-    const result = await getSmartPackingList("Bangkok, Thailand", 7);
-    if (result.items) {
-      const newItems = result.items.slice(0, 5).map((item: any, i: number) => ({
-        id: `ai-${Date.now()}-${i}`,
-        text: `${item.item} ✨`,
-        done: false,
-        type: 'luggage'
-      }));
-      setTodos([...todos, ...newItems]);
-    }
-    setAiLoading(false);
   };
 
   const addItem = (type: string) => {
@@ -107,31 +87,6 @@ const PlanningView: React.FC = () => {
 
   return (
     <div className="space-y-8 pb-10">
-      {/* AI 助手區塊 */}
-      <div className="mori-card p-6 mori-shadow bg-[#FDF9F0] border-4 border-[#C6A664] overflow-hidden relative">
-        <div className="washi-tape washi-tape-pink w-20"></div>
-        <div className="flex items-center gap-3 mb-3">
-          <div className="bg-white p-2 rounded-2xl border-2 border-[#C6A664] mori-shadow">
-            <Sparkles className="text-[#C6A664]" />
-          </div>
-          <h3 className="font-black text-lg text-[#5D5443]">Mori AI 規劃小助手</h3>
-        </div>
-        <p className="text-xs text-[#5D5443] font-bold mb-5 leading-relaxed">
-          想知道曼谷 7 天該帶什麼嗎？<br/>讓 Gemini 為你自動分析清單！
-        </p>
-        <button 
-          onClick={handleAiSuggest}
-          disabled={aiLoading}
-          className="w-full bg-[#C6A664] py-3 rounded-2xl text-sm font-black text-white mori-shadow active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
-        >
-          {aiLoading ? (
-            <span className="animate-spin">🍭</span>
-          ) : (
-            <><Wand2 size={16} /> 智能產生打包清單</>
-          )}
-        </button>
-      </div>
-
       {categories.map(cat => {
         const categoryTodos = todos.filter(t => t.type === cat.id);
         return (
