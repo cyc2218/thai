@@ -16,7 +16,7 @@ const INITIAL_BANGKOK_DATA = {
   ],
   itinerary: {
     0: {
-      fullTitle: 'Day 1 | 1/7 (三) 入境與美食探索',
+      fullTitle: '第 1 天 | 1/7 (三) 入境與美食探索',
       items: [
         { id: '1-1', time: '16:30', title: '抵達素萬那普機場 (BKK) 🛫', location: 'BKK Airport', transport: 'ARL → Phaya Thai 轉 BTS', category: 'Transport', note: '領取行李與網卡，開啟曼谷之旅。' },
         { id: '1-2', time: '19:00', title: 'MBK Center 購物與伴手禮 🛍️', location: '飯店對面', transport: '步行即達', category: 'Shopping', note: '採買藥妝、零食與平價服飾。' },
@@ -26,7 +26,7 @@ const INITIAL_BANGKOK_DATA = {
       dayTransport: "機場至飯店：ARL 至 Phaya Thai 轉 BTS 至 National Stadium。\n市中心移動：全程步行即可抵達各大商圈。"
     },
     1: {
-      fullTitle: 'Day 2 | 1/8 (四) 水門市場與 Siam 購物',
+      fullTitle: '第 2 天 | 1/8 (四) 水門市場與 Siam 購物',
       items: [
         { id: '2-1', time: '10:00', title: '水門市場 Platinum 👗', location: 'Platinum Fashion Mall', transport: 'Skywalk 步行', category: 'Shopping', note: '泰國最大服飾批發中心，有冷氣吹非常舒適。' },
         { id: '2-2', time: '12:00', title: '紅大哥海南雞飯 🍛', location: '水門市場旁', transport: '步行', category: 'Food', note: '必吃米其林推薦名店。' },
@@ -37,7 +37,7 @@ const INITIAL_BANGKOK_DATA = {
       dayTransport: "推薦方式：利用空中步道 (Skywalk) 避開塞車，串聯 Siam 百貨至水門空橋。"
     },
     2: {
-      fullTitle: 'Day 3 | 1/9 (五) 素坤逸現代曼谷巡禮',
+      fullTitle: '第 3 天 | 1/9 (五) 素坤逸現代曼谷巡禮',
       items: [
         { id: '3-1', time: '09:00', title: '榮泰米粉湯 (Rung Rueang) 🍜', location: 'BTS Phrom Phong', transport: 'BTS 綠線', category: 'Food', note: '連年米其林必比登推薦，湯頭鮮美。' },
         { id: '3-2', time: '10:00', title: 'EmSphere 百貨探索 🛍️', location: 'BTS Phrom Phong', transport: '步行即達', category: 'Shopping', note: '曼谷最新開幕百貨，設計感十足。' },
@@ -50,7 +50,7 @@ const INITIAL_BANGKOK_DATA = {
       dayTransport: "主要工具：BTS 綠線 (Sukhumvit Line)。景點皆位於站點附近。"
     },
     3: {
-      fullTitle: 'Day 4 | 1/10 (六) 洽圖洽與夜市雙響炮',
+      fullTitle: '第 4 天 | 1/10 (六) 洽圖洽與夜市雙響炮',
       items: [
         { id: '4-1', time: '08:30', title: '勝利紀念碑船麵/泰北咖哩麵 🍜', location: 'Victory Monument', transport: 'BTS 綠線', category: 'Food', note: '體驗一碗 10-20 元的船麵與濃郁 Khao Soi。' },
         { id: '4-2', time: '10:00', title: '洽圖洽週末市集 🎋', location: 'BTS Mo Chit', transport: 'BTS 綠線', category: 'Shopping', note: '全球最大戶外市集，僅週末開放，上萬攤位。' },
@@ -60,7 +60,7 @@ const INITIAL_BANGKOK_DATA = {
       dayTransport: "BTS 與 MRT 轉乘：從洽圖洽 (Mo Chit) 轉搭 MRT 藍線往喬德與輝煌夜市。"
     },
     4: {
-      fullTitle: 'Day 5 | 1/11 (日) 舊城古蹟與落日航行',
+      fullTitle: '第 5 天 | 1/11 (日) 舊城古蹟與落日航行',
       items: [
         { id: '5-1', time: '07:30', title: 'Mr. Joe 脆皮豬肉粿汁 🥣', location: 'Chan Road', transport: 'BTS → Grab', category: 'Food', note: '傳奇脆皮豬肉，湯頭胡椒味濃郁。' },
         { id: '5-2', time: '10:30', title: '唐人街 & 嵩越路老街 🏮', location: 'MRT Wat Mangkon', transport: 'MRT 藍線', category: 'Sightseeing', note: '感受老屋新生文青感，吃 TumLubThai 椰奶點心。' },
@@ -71,7 +71,7 @@ const INITIAL_BANGKOK_DATA = {
       dayTransport: "河運指南：17:30 於 Tha Tien 碼頭搭「藍旗觀光船」最具CP值。"
     },
     5: {
-      fullTitle: 'Day 6 | 1/12 (一) 老派浪漫與新地標',
+      fullTitle: '第 6 天 | 1/12 (一) 老派浪漫與新地標',
       items: [
         { id: '6-1', time: '09:00', title: '邢泰記 & 60 年烤肉 ☕', location: 'Giant Swing 附近', transport: 'Grab', category: 'Food', note: '泰式老派早茶館，必吃班蘭蛋捲。' },
         { id: '6-2', time: '13:00', title: 'ICONSIAM 暹羅天地 💎', location: '河岸', transport: '接駁船', category: 'Shopping', note: '曼谷最強百貨，地下一樓水上市場超豐富。' },
@@ -81,7 +81,7 @@ const INITIAL_BANGKOK_DATA = {
       dayTransport: "多元移動：舊城區叫 Grab，往 ICONSIAM 搭接駁船，晚上搭 BTS。"
     },
     6: {
-      fullTitle: 'Day 7 | 1/13 (二) 完美賦歸',
+      fullTitle: '第 7 天 | 1/13 (二) 完美賦歸',
       items: [
         { id: '7-1', time: '10:00', title: '飯店週邊最後採買 🧸', location: 'National Stadium', transport: '步行', category: 'Shopping', note: '最後衝刺 Lotus 超市或飯店休息。' },
         { id: '7-2', time: '13:30', title: '出發前往機場 ✈️', location: 'BKK Airport', transport: 'BTS → ARL', category: 'Transport', note: '建議 14:40 前抵達機場完成報到。' },
@@ -97,7 +97,7 @@ const ScheduleView: React.FC = () => {
   const [showFullOverview, setShowFullOverview] = useState(false);
   const [itineraryData, setItineraryData] = useState(INITIAL_BANGKOK_DATA.itinerary);
   const [editingItem, setEditingItem] = useState<any>(null);
-  
+
   const dates = ['1/7', '1/8', '1/9', '1/10', '1/11', '1/12', '1/13'];
   const { isEditMode } = useContext(AppContext);
 
@@ -129,34 +129,33 @@ const ScheduleView: React.FC = () => {
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center gap-2">
             <CalendarDays className="text-[#C6A664]" size={20} />
-            <h3 className="font-black text-sm uppercase tracking-widest text-[#5D5443]">Trip Overview</h3>
+            <h3 className="font-black text-sm uppercase tracking-widest text-[#5D5443]">行程總覽</h3>
           </div>
-          <button 
+          <button
             onClick={() => setShowFullOverview(!showFullOverview)}
             className="text-[10px] font-black bg-[#FDF9F0] px-3 py-1 rounded-full border-2 border-[#E0E5D5] active:scale-95 transition-transform"
           >
             {showFullOverview ? '收合' : '展開全行程'}
           </button>
         </div>
-        
+
         {showFullOverview && (
           <div className="grid grid-cols-1 gap-3 animate-in fade-in slide-in-from-top-4">
             {INITIAL_BANGKOK_DATA.tripSummary.map((d, i) => (
-              <div 
+              <div
                 key={i}
                 onClick={() => {
                   setSelectedDate(i);
                   setShowFullOverview(false);
                 }}
-                className={`flex items-start gap-3 p-3 rounded-2xl border-2 transition-all active:scale-95 cursor-pointer ${
-                  selectedDate === i ? 'bg-[#F0F7F0] border-[#8BAE8E]' : 'bg-white border-[#FDF9F0] hover:border-[#E0E5D5]'
-                }`}
+                className={`flex items-start gap-3 p-3 rounded-2xl border-2 transition-all active:scale-95 cursor-pointer ${selectedDate === i ? 'bg-[#F0F7F0] border-[#8BAE8E]' : 'bg-white border-[#FDF9F0] hover:border-[#E0E5D5]'
+                  }`}
               >
                 <div className={`w-10 h-10 rounded-2xl ${d.color} flex items-center justify-center text-xl shrink-0 border-2 border-white shadow-sm mt-0.5`}>
                   {d.icon}
                 </div>
                 <div className="flex-1 overflow-hidden">
-                  <span className="text-[9px] font-black text-[#8BAE8E] uppercase tracking-tighter">Day {d.day} · {d.date}</span>
+                  <span className="text-[9px] font-black text-[#8BAE8E] uppercase tracking-tighter">第 {d.day} 天 · {d.date}</span>
                   <p className="text-[11px] font-bold text-[#5D5443] leading-relaxed mt-0.5">
                     {d.title}
                   </p>
@@ -174,11 +173,10 @@ const ScheduleView: React.FC = () => {
           <button
             key={date}
             onClick={() => setSelectedDate(idx)}
-            className={`flex-shrink-0 w-16 h-24 rounded-[2rem] flex flex-col items-center justify-center border-4 transition-all mori-shadow active:scale-90 ${
-              selectedDate === idx 
-                ? 'bg-[#8BAE8E] border-[#8BAE8E] text-white -translate-y-2' 
-                : 'bg-white border-[#E0E5D5] text-[#5D5443]'
-            }`}
+            className={`flex-shrink-0 w-16 h-24 rounded-[2rem] flex flex-col items-center justify-center border-4 transition-all mori-shadow active:scale-90 ${selectedDate === idx
+              ? 'bg-[#8BAE8E] border-[#8BAE8E] text-white -translate-y-2'
+              : 'bg-white border-[#E0E5D5] text-[#5D5443]'
+              }`}
           >
             <span className="text-[10px] font-black uppercase">D{idx + 1}</span>
             <span className="text-lg font-black">{date}</span>
@@ -204,7 +202,7 @@ const ScheduleView: React.FC = () => {
               </div>
               <span className="text-[10px] font-black mt-2 text-[#C6A664] bg-white px-2 py-0.5 rounded-full border border-[#E0E5D5]">{item.time}</span>
             </div>
-            <div 
+            <div
               onClick={() => handleEditItem(item)}
               className={`flex-1 mori-card p-5 mori-shadow border-4 bg-white transition-all hover:translate-x-1 ${isEditMode ? 'cursor-pointer border-dashed border-[#8BAE8E] hover:bg-[#F0F7F0]' : 'border-[#E0E5D5]'}`}
             >
@@ -234,7 +232,7 @@ const ScheduleView: React.FC = () => {
           </div>
         ))}
       </div>
-      
+
       {/* 交通詳細說明 */}
       <div className="mori-card p-5 bg-[#F2E5D1]/30 border-4 border-[#C6A664] mori-shadow relative overflow-hidden">
         <div className="washi-tape opacity-30 transform -rotate-12"></div>
@@ -265,10 +263,10 @@ const ScheduleView: React.FC = () => {
                 <label className="text-[10px] font-black text-[#8BAE8E] uppercase flex items-center gap-1.5">
                   <Clock size={12} /> 時間
                 </label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   value={editingItem.time}
-                  onChange={(e) => setEditingItem({...editingItem, time: e.target.value})}
+                  onChange={(e) => setEditingItem({ ...editingItem, time: e.target.value })}
                   className="w-full bg-white border-2 border-[#E0E5D5] rounded-xl px-4 py-2.5 text-sm font-bold focus:border-[#8BAE8E] outline-none transition-all"
                 />
               </div>
@@ -277,10 +275,10 @@ const ScheduleView: React.FC = () => {
                 <label className="text-[10px] font-black text-[#8BAE8E] uppercase flex items-center gap-1.5">
                   <Type size={12} /> 行程標題
                 </label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   value={editingItem.title}
-                  onChange={(e) => setEditingItem({...editingItem, title: e.target.value})}
+                  onChange={(e) => setEditingItem({ ...editingItem, title: e.target.value })}
                   className="w-full bg-white border-2 border-[#E0E5D5] rounded-xl px-4 py-2.5 text-sm font-bold focus:border-[#8BAE8E] outline-none transition-all"
                 />
               </div>
@@ -289,10 +287,10 @@ const ScheduleView: React.FC = () => {
                 <label className="text-[10px] font-black text-[#8BAE8E] uppercase flex items-center gap-1.5">
                   <MapPin size={12} /> 地點
                 </label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   value={editingItem.location}
-                  onChange={(e) => setEditingItem({...editingItem, location: e.target.value})}
+                  onChange={(e) => setEditingItem({ ...editingItem, location: e.target.value })}
                   className="w-full bg-white border-2 border-[#E0E5D5] rounded-xl px-4 py-2.5 text-sm font-bold focus:border-[#8BAE8E] outline-none transition-all"
                 />
               </div>
@@ -301,22 +299,22 @@ const ScheduleView: React.FC = () => {
                 <label className="text-[10px] font-black text-[#8BAE8E] uppercase flex items-center gap-1.5">
                   <AlignLeft size={12} /> 備註內容
                 </label>
-                <textarea 
+                <textarea
                   value={editingItem.note}
-                  onChange={(e) => setEditingItem({...editingItem, note: e.target.value})}
+                  onChange={(e) => setEditingItem({ ...editingItem, note: e.target.value })}
                   className="w-full bg-white border-2 border-[#E0E5D5] rounded-xl px-4 py-2.5 text-sm font-bold focus:border-[#8BAE8E] outline-none transition-all min-h-[100px] resize-none"
                 />
               </div>
             </div>
 
             <div className="pt-4 flex gap-3">
-              <button 
+              <button
                 onClick={() => setEditingItem(null)}
                 className="flex-1 py-3 rounded-2xl border-2 border-[#E0E5D5] text-gray-400 font-black text-sm bg-white"
               >
                 取消
               </button>
-              <button 
+              <button
                 onClick={handleSaveEdit}
                 className="flex-1 py-3 rounded-2xl bg-[#8BAE8E] text-white font-black text-sm mori-shadow border-2 border-[#8BAE8E]"
               >

@@ -45,13 +45,13 @@ const BookingsView: React.FC = () => {
             <Plane size={20} />
             <span className="font-black tracking-widest uppercase">STARLUX JX745</span>
           </div>
-          <span className="text-xs bg-white/20 px-2 py-1 rounded font-bold">JAN 07</span>
+          <span className="text-xs bg-white/20 px-2 py-1 rounded font-bold">1月 7日</span>
         </div>
         <div className="p-6 bg-white relative">
           <div className="flex justify-between items-center mb-6">
             <div className="text-center">
               <p className="text-3xl font-black">TPE</p>
-              <p className="text-[10px] text-gray-400 font-bold">Taipei (T2)</p>
+              <p className="text-[10px] text-gray-400 font-bold">台北 (T2)</p>
             </div>
             <div className="flex-1 px-4 flex flex-col items-center">
               <div className="w-full border-t-4 border-dashed border-[#E0E5D5] relative">
@@ -61,7 +61,7 @@ const BookingsView: React.FC = () => {
             </div>
             <div className="text-center">
               <p className="text-3xl font-black">BKK</p>
-              <p className="text-[10px] text-gray-400 font-bold">Bangkok</p>
+              <p className="text-[10px] text-gray-400 font-bold">曼谷</p>
             </div>
           </div>
         </div>
@@ -74,13 +74,13 @@ const BookingsView: React.FC = () => {
             <Plane size={20} />
             <span className="font-black tracking-widest uppercase">STARLUX JX746</span>
           </div>
-          <span className="text-xs bg-white/20 px-2 py-1 rounded font-bold">JAN 13</span>
+          <span className="text-xs bg-white/20 px-2 py-1 rounded font-bold">1月 13日</span>
         </div>
         <div className="p-6 bg-white relative">
           <div className="flex justify-between items-center mb-6">
             <div className="text-center">
               <p className="text-3xl font-black">BKK</p>
-              <p className="text-[10px] text-gray-400 font-bold">Bangkok</p>
+              <p className="text-[10px] text-gray-400 font-bold">曼谷</p>
             </div>
             <div className="flex-1 px-4 flex flex-col items-center">
               <div className="w-full border-t-4 border-dashed border-[#E0E5D5] relative">
@@ -90,7 +90,7 @@ const BookingsView: React.FC = () => {
             </div>
             <div className="text-center">
               <p className="text-3xl font-black">TPE</p>
-              <p className="text-[10px] text-gray-400 font-bold">Taipei (T2)</p>
+              <p className="text-[10px] text-gray-400 font-bold">台北 (T2)</p>
             </div>
           </div>
         </div>
@@ -99,17 +99,17 @@ const BookingsView: React.FC = () => {
       {/* Hotel */}
       <div className="mori-card overflow-hidden mori-shadow border-4">
         <div className="p-4">
-          <h3 className="text-lg font-black text-[#5D5443]">Ibis Bangkok Siam</h3>
+          <h3 className="text-lg font-black text-[#5D5443]">曼谷暹羅宜必思酒店</h3>
           <p className="text-[10px] text-gray-500 flex items-center gap-1 mt-1 font-bold">
             <MapPin size={12} className="text-[#8BAE8E]" /> BTS National Stadium 1 號出口旁
           </p>
           <div className="grid grid-cols-2 gap-4 mt-4 border-t-2 border-dashed border-[#FDF9F0] pt-4">
             <div>
-              <p className="text-[8px] text-gray-400 uppercase font-black">Check-in</p>
+              <p className="text-[8px] text-gray-400 uppercase font-black">入住</p>
               <p className="text-xs font-black">2026/01/07</p>
             </div>
             <div>
-              <p className="text-[8px] text-gray-400 uppercase font-black">Check-out</p>
+              <p className="text-[8px] text-gray-400 uppercase font-black">退房</p>
               <p className="text-xs font-black">2026/01/13</p>
             </div>
           </div>

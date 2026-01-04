@@ -49,14 +49,14 @@ const ExpenseView: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState('2026-01-07');
 
   // 過濾後的支出項目
-  const filteredExpenses = useMemo(() => 
+  const filteredExpenses = useMemo(() =>
     activeFilter === 'All' ? expenses : expenses.filter(e => e.cat === activeFilter)
-  , [expenses, activeFilter]);
+    , [expenses, activeFilter]);
 
   // 計算總額
-  const categoryTotal = useMemo(() => 
+  const categoryTotal = useMemo(() =>
     filteredExpenses.reduce((sum, item) => sum + item.amount, 0)
-  , [filteredExpenses]);
+    , [filteredExpenses]);
 
   // 每日統計資料
   const dailyStats = useMemo(() => {
@@ -124,7 +124,7 @@ const ExpenseView: React.FC = () => {
         <div className="relative z-10">
           <div className="flex justify-between items-start">
             <p className="text-[10px] font-black uppercase tracking-widest opacity-80">
-              {activeFilter === 'All' ? 'Total Expenses' : `${selectedCat.label} Total`}
+              {activeFilter === 'All' ? '總支出' : `${selectedCat.label} 總計`}
             </p>
             <TrendingUp size={20} className="opacity-80" />
           </div>
@@ -141,15 +141,15 @@ const ExpenseView: React.FC = () => {
       <div className="mori-card p-5 mori-shadow border-4 bg-white relative">
         <div className="flex items-center gap-2 mb-4 border-b-2 border-dashed border-[#FDF9F0] pb-2 text-[#C6A664]">
           <Calendar size={18} />
-          <h3 className="font-black text-[10px] uppercase tracking-widest">Daily Summary (THB)</h3>
+          <h3 className="font-black text-[10px] uppercase tracking-widest">每日支出總覽 (THB)</h3>
         </div>
         <div className="grid grid-cols-7 gap-1">
           {dailyStats.map((stat, i) => (
             <div key={i} className="flex flex-col items-center">
               <span className="text-[8px] font-bold text-gray-400 mb-1">{stat.date}</span>
               <div className="w-full bg-[#FDF9F0] rounded-full h-16 relative overflow-hidden border border-[#E0E5D5]">
-                <div 
-                  className="absolute bottom-0 w-full bg-[#8BAE8E] transition-all duration-700" 
+                <div
+                  className="absolute bottom-0 w-full bg-[#8BAE8E] transition-all duration-700"
                   style={{ height: `${Math.min(100, (stat.total / 4000) * 100)}%` }}
                 ></div>
               </div>
@@ -165,9 +165,8 @@ const ExpenseView: React.FC = () => {
           <button
             key={cat.id}
             onClick={() => setActiveFilter(cat.id)}
-            className={`flex-shrink-0 px-4 py-2 rounded-full text-[10px] font-black border-2 transition-all active:scale-95 ${
-              activeFilter === cat.id ? 'bg-[#C6A664] border-[#C6A664] text-white shadow-md' : 'bg-white border-[#E0E5D5] text-gray-400'
-            }`}
+            className={`flex-shrink-0 px-4 py-2 rounded-full text-[10px] font-black border-2 transition-all active:scale-95 ${activeFilter === cat.id ? 'bg-[#C6A664] border-[#C6A664] text-white shadow-md' : 'bg-white border-[#E0E5D5] text-gray-400'
+              }`}
           >
             {cat.emoji} {cat.label}
           </button>
@@ -177,13 +176,13 @@ const ExpenseView: React.FC = () => {
       {/* 支出清單 */}
       <div className="space-y-3">
         <div className="flex justify-between items-center px-2">
-           <h3 className="font-black text-[10px] text-gray-400 uppercase tracking-widest flex items-center gap-2 flex-1">
-            Activity Log <div className="h-[1px] flex-1 bg-[#E0E5D5]"></div>
+          <h3 className="font-black text-[10px] text-gray-400 uppercase tracking-widest flex items-center gap-2 flex-1">
+            活動紀錄 <div className="h-[1px] flex-1 bg-[#E0E5D5]"></div>
           </h3>
           {isEditMode && (
-             <span className="text-[9px] font-black text-red-400 bg-red-50 px-2 py-0.5 rounded-full border border-red-100 animate-pulse ml-2">
-               解鎖編輯中
-             </span>
+            <span className="text-[9px] font-black text-red-400 bg-red-50 px-2 py-0.5 rounded-full border border-red-100 animate-pulse ml-2">
+              解鎖編輯中
+            </span>
           )}
         </div>
 
@@ -203,11 +202,11 @@ const ExpenseView: React.FC = () => {
               <div className="flex items-center gap-3 ml-2 shrink-0">
                 <div className="text-right">
                   <p className="font-black text-sm text-[#5D5443]">฿ {item.amount.toLocaleString()}</p>
-                  <p className="text-[9px] font-black text-[#8BAE8E] uppercase tracking-tighter">shared</p>
+                  <p className="text-[9px] font-black text-[#8BAE8E] uppercase tracking-tighter">分攤</p>
                 </div>
-                
+
                 {isEditMode && (
-                  <button 
+                  <button
                     onClick={(e) => askDelete(item.id, e)}
                     className="bg-red-50 text-red-400 p-3 rounded-2xl border-2 border-red-100 shadow-sm active:scale-75 transition-all animate-in zoom-in-50 cursor-pointer hover:bg-red-100"
                     title="刪除此筆記錄"
@@ -219,7 +218,7 @@ const ExpenseView: React.FC = () => {
             </div>
           </div>
         ))}
-        
+
         {filteredExpenses.length === 0 && (
           <div className="text-center py-20 opacity-30 flex flex-col items-center gap-2">
             <AlertCircle size={32} />
@@ -229,8 +228,8 @@ const ExpenseView: React.FC = () => {
       </div>
 
       {/* 新增按鈕 */}
-      <button 
-        onClick={() => setShowAdd(true)} 
+      <button
+        onClick={() => setShowAdd(true)}
         className="fixed bottom-28 right-6 w-16 h-16 bg-[#C6A664] rounded-full mori-shadow border-4 border-white flex items-center justify-center text-white active:scale-90 transition-transform z-40"
       >
         <Plus size={32} />
@@ -246,17 +245,17 @@ const ExpenseView: React.FC = () => {
             <div>
               <h3 className="text-lg font-black text-[#5D5443]">要刪除這筆帳嗎？</h3>
               <p className="text-xs text-gray-400 mt-2 font-bold leading-relaxed">
-                這項操作無法復原喔，<br/>確定要讓它消失在小手帳裡嗎？🧸
+                這項操作無法復原喔，<br />確定要讓它消失在小手帳裡嗎？🧸
               </p>
             </div>
             <div className="flex gap-3 pt-2">
-              <button 
+              <button
                 onClick={() => setConfirmDeleteId(null)}
                 className="flex-1 py-3 rounded-2xl border-2 border-[#E0E5D5] text-gray-400 font-black text-xs active:scale-95 transition-all bg-white"
               >
                 先不要 🙅
               </button>
-              <button 
+              <button
                 onClick={executeDelete}
                 className="flex-1 py-3 rounded-2xl bg-red-400 text-white font-black text-xs mori-shadow active:scale-95 transition-all border-2 border-red-400 shadow-[4px_4px_0px_#FCA5A5]"
               >
@@ -273,9 +272,9 @@ const ExpenseView: React.FC = () => {
           <div className="w-full bg-[#FDF9F0] rounded-t-[2.5rem] p-6 space-y-4 animate-in slide-in-from-bottom-full border-t-8 border-[#C6A664] max-h-[90vh] overflow-y-auto custom-scrollbar">
             <div className="flex justify-between items-center px-2">
               <h3 className="text-xl font-black text-[#5D5443]">記一筆支出 🧸</h3>
-              <button onClick={() => setShowAdd(false)} className="bg-white p-2 rounded-full border-2 border-[#E0E5D5] shadow-sm"><X size={20}/></button>
+              <button onClick={() => setShowAdd(false)} className="bg-white p-2 rounded-full border-2 border-[#E0E5D5] shadow-sm"><X size={20} /></button>
             </div>
-            
+
             {/* 日期選擇區 */}
             <div className="space-y-2 px-2">
               <p className="text-[10px] font-black text-[#C6A664] uppercase tracking-widest flex items-center gap-1.5">
@@ -286,11 +285,10 @@ const ExpenseView: React.FC = () => {
                   <button
                     key={d.date}
                     onClick={() => setSelectedDate(d.date)}
-                    className={`flex-shrink-0 px-3 py-1.5 rounded-xl text-[10px] font-black border-2 transition-all ${
-                      selectedDate === d.date 
-                        ? 'bg-[#8BAE8E] border-[#8BAE8E] text-white shadow-sm' 
+                    className={`flex-shrink-0 px-3 py-1.5 rounded-xl text-[10px] font-black border-2 transition-all ${selectedDate === d.date
+                        ? 'bg-[#8BAE8E] border-[#8BAE8E] text-white shadow-sm'
                         : 'bg-white border-[#E0E5D5] text-gray-400'
-                    }`}
+                      }`}
                   >
                     {d.label}
                   </button>
@@ -299,10 +297,10 @@ const ExpenseView: React.FC = () => {
             </div>
 
             <div className="mori-card p-6 border-4 bg-white text-center space-y-3">
-              <input 
-                type="text" 
-                placeholder="項目名稱..." 
-                className="w-full text-center font-black outline-none text-lg text-[#5D5443] placeholder:text-gray-200" 
+              <input
+                type="text"
+                placeholder="項目名稱..."
+                className="w-full text-center font-black outline-none text-lg text-[#5D5443] placeholder:text-gray-200"
                 value={inputTitle}
                 onChange={e => setInputTitle(e.target.value)}
               />
@@ -310,15 +308,14 @@ const ExpenseView: React.FC = () => {
                 <p className="text-5xl font-black text-[#5D5443]">฿ {inputAmount}</p>
               </div>
             </div>
-            
+
             <div className="grid grid-cols-4 gap-3">
               {[1, 2, 3, '🍱', 4, 5, 6, '🚆', 7, 8, 9, '🛍️', 'C', 0, '.', '✓'].map(k => (
-                <button 
-                  key={k} 
+                <button
+                  key={k}
                   onClick={() => handleKeyPress(k)}
-                  className={`mori-card p-4 mori-shadow border-2 text-lg font-black active:scale-90 transition-all ${
-                    k === '✓' ? 'bg-[#8BAE8E] text-white border-[#8BAE8E]' : (['🍱', '🚆', '🛍️'].includes(k as string) && selectedCat.emoji === k ? 'bg-orange-50 border-[#C6A664]' : 'bg-white')
-                  }`}
+                  className={`mori-card p-4 mori-shadow border-2 text-lg font-black active:scale-90 transition-all ${k === '✓' ? 'bg-[#8BAE8E] text-white border-[#8BAE8E]' : (['🍱', '🚆', '🛍️'].includes(k as string) && selectedCat.emoji === k ? 'bg-orange-50 border-[#C6A664]' : 'bg-white')
+                    }`}
                 >
                   {k}
                 </button>
