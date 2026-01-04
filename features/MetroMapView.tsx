@@ -1,14 +1,12 @@
-
-import React, { useState, useEffect, useRef } from 'react';
-import { Download, ZoomIn, Info, Sparkles, Camera, Trash2, RefreshCw } from 'lucide-react';
-import { db, storage } from '../services/firebase';
+import React, { useState, useEffect } from 'react';
+import { Download, Info, Camera, Trash2, RefreshCw, Link } from 'lucide-react';
+import { db } from '../services/firebase';
 import { doc, onSnapshot, setDoc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 const MetroMapView: React.FC = () => {
   const [image, setImage] = useState<string | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [inputUrl, setInputUrl] = useState('');
+  const [showInput, setShowInput] = useState(false);
   const docId = 'trip_metro_map_v1';
 
   // 監聽 Firebase 資料
@@ -22,37 +20,20 @@ const MetroMapView: React.FC = () => {
     return () => unsub();
   }, []);
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !storage || !db) return;
-
+  const handleSaveUrl = async () => {
+    if (!inputUrl.trim() || !db) return;
     try {
-      setIsUploading(true);
-      // 1. 上傳圖片到 Storage
-      const storageRef = ref(storage, `metro_maps/${Date.now()}_${file.name}`);
-      await uploadBytes(storageRef, file);
-
-      // 2. 取得下載網址
-      const downloadURL = await getDownloadURL(storageRef);
-
-      // 3. 儲存網址到 Firestore
-      await setDoc(doc(db, 'trips', docId), { imageUrl: downloadURL }, { merge: true });
-
+      await setDoc(doc(db, 'trips', docId), { imageUrl: inputUrl.trim() }, { merge: true });
+      setShowInput(false);
+      setInputUrl('');
     } catch (error) {
-      console.error("Upload failed:", error);
-      alert("上傳失敗，請稍後再試 🐛");
-    } finally {
-      setIsUploading(false);
+      console.error("Save URL failed:", error);
+      alert("儲存連結失敗，請稍後再試 🐛");
     }
-  };
-
-  const triggerUpload = () => {
-    fileInputRef.current?.click();
   };
 
   const removeImage = async () => {
     if (confirm('確定要移除這張照片嗎？🧸') && db) {
-      // 這裡我們只移除連結，保留 Storage 檔案作為備份
       await setDoc(doc(db, 'trips', docId), { imageUrl: null }, { merge: true });
     }
   };
@@ -73,7 +54,10 @@ const MetroMapView: React.FC = () => {
         {image && (
           <div className="absolute top-8 right-6 z-20 flex flex-col gap-2">
             <button
-              onClick={triggerUpload}
+              onClick={() => {
+                setShowInput(true);
+                setImage(null);
+              }}
               className="bg-white/90 backdrop-blur-sm p-3 rounded-2xl border-2 border-[#E0E5D5] shadow-sm active:scale-75 transition-transform"
               title="更換照片"
             >
@@ -89,14 +73,6 @@ const MetroMapView: React.FC = () => {
           </div>
         )}
 
-        <input
-          type="file"
-          ref={fileInputRef}
-          onChange={handleFileUpload}
-          accept="image/*"
-          className="hidden"
-        />
-
         <div className="bg-[#FDF9F0] min-h-[350px] flex flex-col items-center justify-center p-6 border-2 border-dashed border-[#E0E5D5] rounded-[1.5rem] relative">
           {image ? (
             <div className="bg-white p-3 shadow-xl rotate-1 border border-gray-100 w-full animate-in fade-in zoom-in-95 duration-300">
@@ -110,18 +86,51 @@ const MetroMapView: React.FC = () => {
               </div>
             </div>
           ) : (
-            <button
-              onClick={triggerUpload}
-              className="flex flex-col items-center gap-4 group active:scale-95 transition-transform"
-            >
-              <div className="w-24 h-24 rounded-[2.5rem] bg-white border-4 border-[#E0E5D5] flex items-center justify-center text-[#E0E5D5] group-hover:text-[#8BAE8E] group-hover:border-[#8BAE8E] transition-colors mori-shadow">
-                <Camera size={40} />
-              </div>
-              <div className="text-center">
-                <p className="text-sm font-black text-[#5D5443]">{isUploading ? '正在上傳到雲端...' : '點擊上傳照片'}</p>
-                <p className="text-[10px] text-gray-400 font-bold mt-1">{isUploading ? '請稍候 🚀' : '上傳曼谷地鐵圖或重要截圖 ✨'}</p>
-              </div>
-            </button>
+            <div className="w-full max-w-sm">
+              {!showInput ? (
+                <button
+                  onClick={() => setShowInput(true)}
+                  className="flex flex-col items-center gap-4 group active:scale-95 transition-transform w-full"
+                >
+                  <div className="w-24 h-24 rounded-[2.5rem] bg-white border-4 border-[#E0E5D5] flex items-center justify-center text-[#E0E5D5] group-hover:text-[#8BAE8E] group-hover:border-[#8BAE8E] transition-colors mori-shadow">
+                    <Camera size={40} />
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm font-black text-[#5D5443]">點擊設定地圖</p>
+                    <p className="text-[10px] text-gray-400 font-bold mt-1">貼上圖片連結，全團同步 ✨</p>
+                  </div>
+                </button>
+              ) : (
+                <div className="animate-in zoom-in-95 duration-200 bg-white p-4 rounded-3xl border-4 border-[#8BAE8E] mori-shadow space-y-3">
+                  <div className="flex items-center gap-2 text-[#8BAE8E] mb-1">
+                    <Link size={16} />
+                    <span className="text-xs font-black">貼上圖片連結</span>
+                  </div>
+                  <input
+                    autoFocus
+                    type="text"
+                    placeholder="https://imgur.com/..."
+                    value={inputUrl}
+                    onChange={(e) => setInputUrl(e.target.value)}
+                    className="w-full bg-[#FDF9F0] border-2 border-[#E0E5D5] rounded-xl px-3 py-2 text-xs font-bold text-[#5D5443] outline-none focus:border-[#8BAE8E]"
+                  />
+                  <div className="flex gap-2 pt-2">
+                    <button
+                      onClick={() => setShowInput(false)}
+                      className="flex-1 py-2 rounded-xl text-gray-400 text-xs font-black hover:bg-gray-50 transition-colors"
+                    >
+                      取消
+                    </button>
+                    <button
+                      onClick={handleSaveUrl}
+                      className="flex-1 py-2 rounded-xl bg-[#8BAE8E] text-white text-xs font-black mori-shadow active:scale-95 transition-transform"
+                    >
+                      儲存連結
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           )}
 
           <div className="absolute bottom-4 left-4 right-4 flex justify-center">
@@ -140,10 +149,11 @@ const MetroMapView: React.FC = () => {
           {image && (
             <a
               href={image}
-              download="bangkok-memo.png"
+              target="_blank"
+              rel="noopener noreferrer"
               className="bg-[#8BAE8E] text-white px-4 py-2 rounded-2xl text-[10px] font-black flex items-center gap-2 active:scale-90 transition-transform mori-shadow"
             >
-              <Download size={14} /> 下載原始檔
+              <Download size={14} /> 開啟原圖
             </a>
           )}
         </div>
